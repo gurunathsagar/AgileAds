@@ -15,5 +15,5 @@ libraries<-function()
 	library(wavelets)
 }
 libraries()
-dt<-read.csv2("input.csv")
+dt<-scan("input.csv",skip=1)
 w <- dwt(dt, filter="haar")
