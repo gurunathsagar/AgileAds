@@ -1,3 +1,5 @@
+#References for Haar Transform
+
 import pandas as pd
 import numpy as np
 import math
@@ -71,6 +73,9 @@ for i in range(32):
 	p = np.dot(p,p1)
 	x = np.dot(x,p)
 	predictedVals1.append(max_index(x))
+
+
+
 
 
 
