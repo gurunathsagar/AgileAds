@@ -15,17 +15,17 @@ def max_index(arr):
 			m = arr[i]
 	return index
 
-data = pd.read_csv('workload1.csv')
-ts1 = data['X']
-ts1 = list(ts1[:8192])
+data = pd.read_csv('workload2.csv')
+ts = data['X']
+ts = list(ts[:8192])
 haarFactor = 1/math.sqrt(2)
-n = len(ts1); d = 8192; w= 4
-max_n = max(ts1)
-min_n = min(ts1)
+n = len(ts); d = 8192; w= 4
+max_n = max(ts)
+min_n = min(ts)
 nScales = int(math.log(w,2))
 
 class WaveletTransform(object) :
-	def __init__(self,noScales = None,wavelet = 'haar', d=8192, w = 64,binSize = 2):
+	def __init__(self,noScales = None,wavelet = 'haar', d=8192, w = 64,binSize = 2.5):
 		scales = int(math.log(w,2))
 		if(noScales==None):
 			self.noScales = scales
@@ -88,29 +88,23 @@ class WaveletTransform(object) :
 		for i in range(n-1):
 			p[a[i]][a[i+1]]+=1
 			row_sum[a[i]]+=1
-		print p	
-		for i in range(nScales):
+		#print p	
+		for i in range(nStates):
 			row = p[i]
 			s = row_sum[i]
+			#print "here",i,s
 			if s!=0:
-				print s
+				#print s
 				for j in range(len(row)):
 					row[j]=row[j]/s			
 			else:
-				print "hola"
+				#print "hola"
 				for j in range(len(row)):
-					#print "hola"
 					row[j] = 1.0/nStates
-					#print row[j]
-		print "rowSum",row_sum
-		print "P", p	
 		#predict nV values and append in the array
 		lastState = a[-1]
 		x = np.zeros(nStates)
 		x[lastState]=1;p1=1
-		#print "The states are ->",a,b
-		#print "Last state is ->", lastState
-		#print "The state vector is ->", x
 		predictedCoeffStates = []
 		for i in range(nV):
 			p1 = np.dot(p1,p)
@@ -125,28 +119,25 @@ class WaveletTransform(object) :
 		i = 0; n = self.d / (2**scaleNo); 
 		nV = int(self.w /(2**scaleNo))
 		#predict approximation coefficient
-#		print "the time series is ",ts
-#		print "Predicting the approximation signal",ts[i:n]
 		self.predictSimpleMarkovChain(ts,i, n-1,nV)
 #		print "predicted elements", nV , self.predictionCoeff
 		#predict the detailed coefficients
 		while(scaleNo>0):
 			nV = self.w/(2**scaleNo); i +=n;
 			n = self.d/(2**scaleNo);end = i+n-1
-			print "Predicting detailed coeffs, scale, signal", scaleNo,ts[i:n]
+			#print "Predicting detailed coeffs, scale, signal", scaleNo,ts[i:n]
 			self.predictSimpleMarkovChain(ts,i,end,nV)
-			print "predicted values",self.predictionCoeff
+			#print "predicted values",self.predictionCoeff
 			scaleNo-=1
 #		print "The final predicted coefficients are as follows ->", self.predictionCoeff
 		return self.predictionCoeff
 			
 
-a=ts1[:16]
-haar = WaveletTransform(d=16,w = 4)
-#a = ts1[:]
+a=ts[:]
+haar = WaveletTransform(d=8192,w = 32)
 haar.forwardTransform(ts=a)
 b = haar.predictCoeffs(ts=a)
 haar.inverseTransform(ts=b)
-print "final values ->",b
-
+for i in b:
+	print i
 
