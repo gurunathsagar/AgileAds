@@ -16,18 +16,18 @@ def max_index(arr):
 	return index
 
 data = pd.read_csv('workload1.csv')
-ts = data['X']
-ts = list(ts[:8192])
+ts1 = data['X']
+ts1 = list(ts1[:8192])
 haarFactor = 1/math.sqrt(2)
-n = len(ts); d = 8192; w= 4
-max_n = max(ts)
-min_n = min(ts)
+n = len(ts1); d = 8192; w= 4
+max_n = max(ts1)
+min_n = min(ts1)
 nScales = int(math.log(w,2))
 
 class WaveletTransform(object) :
-	def __init__(self,noScales = 1,wavelet = 'haar', d=8192, w = 64,binSize = 4):
+	def __init__(self,noScales = None,wavelet = 'haar', d=8192, w = 64,binSize = 2):
 		scales = int(math.log(w,2))
-		if(scales < noScales):
+		if(noScales==None):
 			self.noScales = scales
 		else:
 			self.noScales = noScales
@@ -75,56 +75,78 @@ class WaveletTransform(object) :
 		a = ts[start:end+1]; b = a[:]
 		n = end - start + 1
 		a_min = min(a); a_max = max(a); a_range = a_max-a_min
-		nStates = int(math.ceil(a_range/self.binSize))
-		print "The range and number of states for the markov chain is ->",a_range,nStates
+		nStates = int(math.ceil((a_range+1)/self.binSize))
+		#print "range, states, min, max ->",a_range,nStates,a_min,a_max
 		for i in range(len(a)):
-			a[i] = int(math.floor((a[i]-a_min)/a_range))
+			a[i] = int(math.floor((a[i]-a_min)/self.binSize))
 		#Caluclation the Transition Matrix
+		#print "aaaaaaaaaaaaaaaaaaaaaa",a,b
 		p = np.zeros((nStates,nStates))
 		row_sum = np.zeros(nStates)
+		#print p
+		#print "The states are ->",a,b
 		for i in range(n-1):
 			p[a[i]][a[i+1]]+=1
-			row_sum[a[i]]+=1	
+			row_sum[a[i]]+=1
+		print p	
 		for i in range(nScales):
 			row = p[i]
 			s = row_sum[i]
-			for j in range(len(row)):
-				row[j]=row[j]/s				
+			if s!=0:
+				print s
+				for j in range(len(row)):
+					row[j]=row[j]/s			
+			else:
+				print "hola"
+				for j in range(len(row)):
+					#print "hola"
+					row[j] = 1.0/nStates
+					#print row[j]
+		print "rowSum",row_sum
+		print "P", p	
 		#predict nV values and append in the array
 		lastState = a[-1]
 		x = np.zeros(nStates)
 		x[lastState]=1;p1=1
-		print "Last state is ->", lastState
-		print "The state vector is ->", x
+		#print "The states are ->",a,b
+		#print "Last state is ->", lastState
+		#print "The state vector is ->", x
 		predictedCoeffStates = []
 		for i in range(nV):
 			p1 = np.dot(p1,p)
 			x = np.dot(x,p1)
 			predictedCoeffStates.append(max_index(x))
-			print "The next state vector is ->", x
-		print "predicted Coeff States ->",predictedCoeffStates, "end"
+			#print "The next state vector is ->", x
+		#print "predicted Coeff States ->",predictedCoeffStates, "end"
 		for k in predictedCoeffStates:
 			self.predictionCoeff.append(a_min + k*self.binSize + self.binSize/2)
 	def predictCoeffs(self,ts):
 		d = self.d; w= self.w;scaleNo  = self.noScales
 		i = 0; n = self.d / (2**scaleNo); 
-		nV = self.w /(2**scaleNo)
+		nV = int(self.w /(2**scaleNo))
 		#predict approximation coefficient
+#		print "the time series is ",ts
+#		print "Predicting the approximation signal",ts[i:n]
 		self.predictSimpleMarkovChain(ts,i, n-1,nV)
+#		print "predicted elements", nV , self.predictionCoeff
 		#predict the detailed coefficients
 		while(scaleNo>0):
-			nV = self.w/(2**scaleNo); i +=n
+			nV = self.w/(2**scaleNo); i +=n;
 			n = self.d/(2**scaleNo);end = i+n-1
+			print "Predicting detailed coeffs, scale, signal", scaleNo,ts[i:n]
 			self.predictSimpleMarkovChain(ts,i,end,nV)
+			print "predicted values",self.predictionCoeff
 			scaleNo-=1
-		print "The final predicted coefficients are as follows ->", self.predictionCoeff
+#		print "The final predicted coefficients are as follows ->", self.predictionCoeff
 		return self.predictionCoeff
 			
 
-haar = WaveletTransform(noScales = 2, w = 4)
-a = ts[:]
-haar.forwardTransform(a)
-b = haar.predictCoeffs(a)
-print b
+a=ts1[:16]
+haar = WaveletTransform(d=16,w = 4)
+#a = ts1[:]
+haar.forwardTransform(ts=a)
+b = haar.predictCoeffs(ts=a)
+haar.inverseTransform(ts=b)
+print "final values ->",b
 
 
