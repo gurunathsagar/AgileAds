@@ -17,7 +17,7 @@ while True:
         col_14 = words[13]
         col_15 = words[14]
         #print '\n', col_14, '&', col_15, '&', prev_sum
-        procCpu = int(col_15 + col_14)
+        procCpu = int(col_15) + int(col_14)
 
     procCpu_d = procCpu - prev_sum
     print '\n', procCpu_d
