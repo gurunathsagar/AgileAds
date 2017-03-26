@@ -10,16 +10,20 @@ class ClientThread(Thread):
         self.ip = ip 
         self.port = port 
         print "[+] New server socket thread started for " + ip + ":" + str(port)
-        filename = ''
+        fname = ''
+        file_handle = ''
  
     def run(self): 
         while True : 
             data = conn.recv(2048)
             if 'nameofprocess' in data:
                 filename = data.split('#')[1:]
-                print 'filename is ', filename
+                print 'filename is ', filename[0]
+                fname = filename[0]
+                file_handle = open(fname, 'wa')
                 continue
-            print "Server received data:", data
+            file_handle.write(str(data))
+            print "Server received data:", data, 'fname = ', fname
             #MESSAGE = raw_input("Multithreaded Python server : Enter Response from Server/Enter exit:")
             #if MESSAGE == 'exit':
                 #break
