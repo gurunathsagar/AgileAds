@@ -1,6 +1,6 @@
 #References for Haar Transform
 #https://www.math.cornell.edu/~numb3rs/spulido/Numb3rs_107/Numb3rs_107.html
-
+import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import math
@@ -15,14 +15,6 @@ def max_index(arr):
 			m = arr[i]
 	return index
 
-data = pd.read_csv('workload2.csv')
-ts = data['X']
-ts = list(ts[:8192])
-haarFactor = 1/math.sqrt(2)
-n = len(ts); d = 8192; w= 4
-max_n = max(ts)
-min_n = min(ts)
-nScales = int(math.log(w,2))
 
 class WaveletTransform(object) :
 	def __init__(self,noScales = None,wavelet = 'haar', d=8192, w = 64,binSize = 2.5):
@@ -132,12 +124,29 @@ class WaveletTransform(object) :
 #		print "The final predicted coefficients are as follows ->", self.predictionCoeff
 		return self.predictionCoeff
 			
+data = pd.read_csv('workload1.csv')
+ts = data['X']
+ts = list(ts[:8192])
+haarFactor = 1/math.sqrt(2)
+n = len(ts); d = 8192; w= 4
+max_n = max(ts)
+min_n = min(ts)
+nScales = int(math.log(w,2))
+
+
 
 a=ts[:]
+x = np.array([i for i in range(8192)])
+y = ts
 haar = WaveletTransform(d=8192,w = 32)
 haar.forwardTransform(ts=a)
 b = haar.predictCoeffs(ts=a)
 haar.inverseTransform(ts=b)
-for i in b:
-	print i
+xb = np.array([i for i in range(8192, 8224)])
+
+plt.plot(x[8000:],y[8000:])
+plt.plot(xb,b)
+plt.show()
+#for i in b:
+#	print i
 
