@@ -1,8 +1,11 @@
 from time import sleep
 import sys
+import csv
 
 prev_idle = prev_total = prev_sum = 0
 print "hi", sys.argv[1]
+fileHandle = open(sys.argv[1]+".csv", 'wa')
+csvhandle = csv.writer(fileHandle, delimiter=',')
 while True:
     with open('/proc/stat') as file:
     	line = file.readline()
@@ -17,7 +20,7 @@ while True:
         col_14 = words[13]
         col_15 = words[14]
         #print '\n', col_14, '&', col_15, '&', prev_sum
-        procCpu = int(col_15 + col_14)
+        procCpu = int(col_15) + int(col_14)
 
     procCpu_d = procCpu - prev_sum
     print '\n', procCpu_d
@@ -30,7 +33,9 @@ while True:
     idleCPU = 100.0*(idle_d/total_d)
 
     procCpuPercent = 100*(procCpu_d/total_d)
-
+    csvhandle.writerow([str(procCpuPercent)])
     print('%5.1f%%' % idleCPU)
     print('%5.1f%%' % procCpuPercent)
-    sleep(2)
+	
+    fileHandle.write(str(procCpuPercent))
+    sleep(1)
