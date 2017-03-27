@@ -6,13 +6,8 @@ import numpy as np
 import math
 from collections import Counter
 
-def max_index(arr):
-	index = 0;m = 0
-	n = len(arr)
-	for i in range(n):
-		if arr[i]>m:
-			index = i;
-			m = arr[i]
+def max_index(stateVector,p):
+	newState = np.random.choice(a=stateVector,p =p)
 	return index
 
 
@@ -75,6 +70,7 @@ class WaveletTransform(object) :
 		#print "aaaaaaaaaaaaaaaaaaaaaa",a,b
 		p = np.zeros((nStates,nStates))
 		row_sum = np.zeros(nStates)
+		stateVector = range(nStates)
 		#print p
 		#print "The states are ->",a,b
 		for i in range(n-1):
@@ -101,7 +97,8 @@ class WaveletTransform(object) :
 		for i in range(nV):
 			p1 = np.dot(p1,p)
 			x = np.dot(x,p1)
-			predictedCoeffStates.append(max_index(x))
+			predictedCoeffStates.append(max_index(stateVector,x))
+			#print x
 			#print "The next state vector is ->", x
 		#print "predicted Coeff States ->",predictedCoeffStates, "end"
 		for k in predictedCoeffStates:
@@ -124,11 +121,12 @@ class WaveletTransform(object) :
 #		print "The final predicted coefficients are as follows ->", self.predictionCoeff
 		return self.predictionCoeff
 			
-data = pd.read_csv('workload1.csv')
+data = pd.read_csv('13324.csv')
 ts = data['X']
-ts = list(ts[:8192])
+ab = list(ts[:4160])
+ts = list(ts[:4096])
 haarFactor = 1/math.sqrt(2)
-n = len(ts); d = 8192; w= 4
+n = len(ts); d = 4096; w= 4
 max_n = max(ts)
 min_n = min(ts)
 nScales = int(math.log(w,2))
@@ -136,16 +134,22 @@ nScales = int(math.log(w,2))
 
 
 a=ts[:]
-x = np.array([i for i in range(8192)])
+x = np.array([i for i in range(4096)])
 y = ts
-haar = WaveletTransform(d=8192,w = 32)
+haar = WaveletTransform(d=4096,w = 64)
 haar.forwardTransform(ts=a)
 b = haar.predictCoeffs(ts=a)
 haar.inverseTransform(ts=b)
-xb = np.array([i for i in range(8192, 8224)])
+xb = np.array([i for i in range(4096, 4160)])
 
-plt.plot(x[8000:],y[8000:])
+plt.plot(x[4000],y[4000])
+ac = ab[4096:4160]
+#print len(ab)
+#print len(ac)
+#print len(xb)
 plt.plot(xb,b)
+#print b
+plt.plot(xb,ac)
 plt.show()
 #for i in b:
 #	print i
