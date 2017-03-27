@@ -6,12 +6,13 @@ host = '127.0.0.1'
 port = 2000
 BUFFER_SIZE = 2000 
 #MESSAGE = raw_input("tcpClientA: Enter message/ Enter exit:")
-tcpClientA = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 prev_idle = prev_total = prev_sum = 0
 while True:
+    tcpClientA = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     status = tcpClientA.connect_ex((host, port))
     if status:
-        print 'failed', status
+        #print 'failed', status
+        tcpClientA.close()
         continue
 
     print 'status=', status, "hi", sys.argv[1]
@@ -50,6 +51,12 @@ while True:
         print('%5.1f%%' % procCpuPercent)
 
         MESSAGE = str(procCpuPercent)
-        tcpClientA.send(MESSAGE)
-        
+        try:
+            tcpClientA.send(MESSAGE)
+        except socket.error, e:
+            break
         sleep(2)
+    try:
+        tcpClientA.close()
+    except socket.error, e:
+        print 'Client closed'
