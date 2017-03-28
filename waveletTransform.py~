@@ -8,6 +8,13 @@ from collections import Counter
 
 def max_index(stateVector,p):
 	newState = np.random.choice(a=stateVector,p =p)
+	d = {}
+	for i in stateVector:
+		d[i]=p[i]
+	#print "The state vector probablity p is\n",p	
+	#print "The seleceted State is \n",newState
+	#print "The dictionary d is \n",d
+	#print "\n"
 	return newState
 
 
@@ -63,30 +70,22 @@ class WaveletTransform(object) :
 		n = end - start + 1
 		a_min = min(a); a_max = max(a); a_range = a_max-a_min
 		nStates = int(math.ceil((a_range+1)/self.binSize))
-		#print "range, states, min, max ->",a_range,nStates,a_min,a_max
 		for i in range(len(a)):
 			a[i] = int(math.floor((a[i]-a_min)/self.binSize))
 		#Caluclation the Transition Matrix
-		#print "aaaaaaaaaaaaaaaaaaaaaa",a,b
 		p = np.zeros((nStates,nStates))
 		row_sum = np.zeros(nStates)
 		stateVector = range(nStates)
-		#print p
-		#print "The states are ->",a,b
 		for i in range(n-1):
 			p[a[i]][a[i+1]]+=1
 			row_sum[a[i]]+=1
-		#print p	
 		for i in range(nStates):
 			row = p[i]
 			s = row_sum[i]
-			#print "here",i,s
 			if s!=0:
-				#print s
 				for j in range(len(row)):
 					row[j]=row[j]/s			
 			else:
-				#print "hola"
 				for j in range(len(row)):
 					row[j] = 1.0/nStates
 		#predict nV values and append in the array
@@ -98,27 +97,19 @@ class WaveletTransform(object) :
 			p1 = np.dot(p1,p)
 			x = np.dot(x,p1)
 			predictedCoeffStates.append(max_index(stateVector,x))
-			#print x
-			#print "The next state vector is ->", x
-		#print "predicted Coeff States ->",predictedCoeffStates, "end"
 		for k in predictedCoeffStates:
 			self.predictionCoeff.append(a_min + k*self.binSize + self.binSize/2)
 	def predictCoeffs(self,ts):
 		d = self.d; w= self.w;scaleNo  = self.noScales
 		i = 0; n = self.d / (2**scaleNo); 
 		nV = int(self.w /(2**scaleNo))
-		#predict approximation coefficient
 		self.predictSimpleMarkovChain(ts,i, n-1,nV)
-#		print "predicted elements", nV , self.predictionCoeff
 		#predict the detailed coefficients
 		while(scaleNo>0):
 			nV = self.w/(2**scaleNo); i +=n;
 			n = self.d/(2**scaleNo);end = i+n-1
-			#print "Predicting detailed coeffs, scale, signal", scaleNo,ts[i:n]
 			self.predictSimpleMarkovChain(ts,i,end,nV)
-			#print "predicted values",self.predictionCoeff
 			scaleNo-=1
-#		print "The final predicted coefficients are as follows ->", self.predictionCoeff
 		return self.predictionCoeff
 
 
@@ -144,7 +135,7 @@ actual_wValues = list(timeseries[d:d+w])
 #Now for plotting the predicted values vs original values
 
 
-plt.plot(xAxisRange_dw[4000:],timeseries[4000:d+w]) #Plotting the original timeseries wrt timeslots
+plt.plot(xAxisRange_dw[:],timeseries[:d+w]) #Plotting the original timeseries wrt timeslots
 
 #plotting the original values in window w vs predicted values
 plt.plot(xAxisRange_w,actual_wValues)
