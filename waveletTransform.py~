@@ -8,7 +8,7 @@ from collections import Counter
 
 def max_index(stateVector,p):
 	newState = np.random.choice(a=stateVector,p =p)
-	return index
+	return newState
 
 
 class WaveletTransform(object) :
@@ -120,36 +120,35 @@ class WaveletTransform(object) :
 			scaleNo-=1
 #		print "The final predicted coefficients are as follows ->", self.predictionCoeff
 		return self.predictionCoeff
-			
-data = pd.read_csv('13324.csv')
-ts = data['X']
-ab = list(ts[:4160])
-ts = list(ts[:4096])
-haarFactor = 1/math.sqrt(2)
-n = len(ts); d = 4096; w= 4
-max_n = max(ts)
-min_n = min(ts)
+
+
+filename = '13324.csv'			
+data = pd.read_csv(filename)
+timeseries = list(data['X'])
+d = 4096; w= 64; haarFactor = 1/math.sqrt(2)
+xAxisRange_w = np.array([i for i in range(d, d+w)])
+xAxisRange_dw = np.array([i for i in range(d+w)])
+
+ts = list(timeseries[:d]);a=ts[:]
+n = len(ts); max_n = max(ts);min_n = min(ts)
 nScales = int(math.log(w,2))
 
 
+haar = WaveletTransform(d=d,w = w)
 
-a=ts[:]
-x = np.array([i for i in range(4096)])
-y = ts
-haar = WaveletTransform(d=4096,w = 64)
 haar.forwardTransform(ts=a)
-b = haar.predictCoeffs(ts=a)
-haar.inverseTransform(ts=b)
-xb = np.array([i for i in range(4096, 4160)])
+predicted_wValues = haar.predictCoeffs(ts=a)
+haar.inverseTransform(ts=predicted_wValues)
+actual_wValues = list(timeseries[d:d+w])
 
-plt.plot(x[4000],y[4000])
-ac = ab[4096:4160]
-#print len(ab)
-#print len(ac)
-#print len(xb)
-plt.plot(xb,b)
-#print b
-plt.plot(xb,ac)
+#Now for plotting the predicted values vs original values
+
+
+plt.plot(xAxisRange_dw[4000:],timeseries[4000:d+w]) #Plotting the original timeseries wrt timeslots
+
+#plotting the original values in window w vs predicted values
+plt.plot(xAxisRange_w,actual_wValues)
+plt.plot(xAxisRange_w,predicted_wValues)
 plt.show()
 #for i in b:
 #	print i
