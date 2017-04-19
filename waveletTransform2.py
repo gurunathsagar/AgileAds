@@ -15,6 +15,29 @@ def max_index(arr):
 			m = arr[i]
 	return index
 
+class sloCheck(object):
+	def __init__(self,maxUsage, nTimes):
+		self.sloDefmaxUsage = maxUsage
+		self.sloDefn = nTimes
+		#By definition, SLO is violated if resource usage in a 2 minute interval is above maxUsage nTimes
+		self.nTimesSLOundetected=0
+	def isViolated(self, prediction, nlen,actual=None):
+		countP=0;countA=0;
+		for n in range(nlen):
+			if prediction[i]>self.sloDefmaxUsage:
+				countP+=1
+			if actual != None and actual[i]>self.sloDefmaxUsage:	
+				countA+=1
+			if(countP>self.sloDefn):
+				#SLO predicted, return True
+				return True
+			if(countA > self.sloDefn):
+				#SLO was not detected. resulted in actual SLO
+				self.nTimesSLOundetected+=1
+		return False
+		
+
+
 class Accuracy(object):
 	def __init__(self, actualTs, predictedTs):
 		#self.rmse
@@ -52,7 +75,7 @@ def predictSimpleMarkovChain(ts, start, end, nV,w, nStates = 40,padPercent=0):
 	n = end - start + 1; 
 	a_min = min(stateTs); a_max = max(stateTs); a_range = a_max-a_min
 	binSize = (float(a_range+1))/nStates
-	print "range,n_states,binsize", a_range, nStates,binSize
+	#print "range,n_states,binsize", a_range, nStates,binSize
 	for i in range(len(stateTs)):
 		stateTs[i] = int(math.floor((stateTs[i]-a_min)/binSize))
 	#Caluclation the Transition Matrix
@@ -94,7 +117,6 @@ class WaveletTransform(object) :
 		self.waveletFunction = wavelet
 		self.d = d
 		self.w = w
-		self.predictionCoeff = []
 		if(wavelet == 'haar'):
 			self.factor = 1/math.sqrt(2)
 	def forwardTransformSingleScale(self,ts, n):
@@ -174,6 +196,7 @@ plt.plot(xAxisRange_dw[4000:],timeseries[4000:d+w]) #Plotting the original times
 
 errors = Accuracy(actual_wValues, predicted_wValues)
 errorsPad5 = Accuracy(actual_wValues, predictedPad5)
+print "pad0"
 errors.getErrors()
 print "pad5"
 errorsPad5.getErrors()
