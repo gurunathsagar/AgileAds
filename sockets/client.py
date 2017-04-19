@@ -43,16 +43,16 @@ while True:
         idle_d = idle - prev_idle
         total_d = total - prev_total
         prev_idle, prev_total = idle, total
-        idleCPU = 100.0*(idle_d/total_d)
-
-        procCpuPercent = 100*(procCpu_d/total_d)
+        if total_d > 0:
+            idleCPU = 100.0*(idle_d/total_d)
+            procCpuPercent = 100*(procCpu_d/total_d)
 
         print('%5.1f%%' % idleCPU)
         print('%5.1f%%' % procCpuPercent)
 
         MESSAGE = str(procCpuPercent)
         try:
-            tcpClientA.send(MESSAGE)
+            tcpClientA.send(MESSAGE+"#")
         except socket.error, e:
             break
         sleep(2)

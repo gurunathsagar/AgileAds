@@ -12,22 +12,40 @@ class ClientThread(Thread):
         print "[+] New server socket thread started for " + ip + ":" + str(port)
         fname = ''
         file_handle = ''
- 
+        
     def run(self): 
+        data = ''
         while True : 
-            data = conn.recv(2048)
+            data += conn.recv(2048)
             if 'nameofprocess' in data:
-                filename = data.split('#')[1:]
-                print 'filename is ', filename[0]
+                recvBuffer = data.split('#')
+                filename = recvBuffer[1:]
+                if recvBuffer[-1]:
+                    data = recvBuffer[-1]
+                else:
+                    data = ''
+                #print 'filename is ', filename[0]
+                #print 'data: ', data
                 fname = filename[0]
-                file_handle = open(fname, 'wa')
+                file_handle = open(fname, 'a')
                 continue
-            file_handle.write(str(data))
-            print "Server received data:", data, 'fname = ', fname
+            file_handle = open(fname, 'a')
+            #file_handle.write(str(data))
+            recvBuffer = data.split('#')
+            #print "Recv Buffer as follows: ", recvBuffer
+            if recvBuffer[-1]:
+                data = recvBuffer[-1]
+            else:
+                data = ''
+            for values in recvBuffer:
+                if values:
+                    print "Server received data:", values, 'fname = ', fname
+                    file_handle.write(str(values)+"\n")
+            file_handle.close()
             #MESSAGE = raw_input("Multithreaded Python server : Enter Response from Server/Enter exit:")
             #if MESSAGE == 'exit':
                 #break
-            #conn.send(MESSAGE)  # echo 
+            #conn.send()  # echo 
  
 # Multithreaded Python server : TCP Server Socket Program Stub
 TCP_IP = '0.0.0.0' 
