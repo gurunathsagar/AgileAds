@@ -140,7 +140,7 @@ class WaveletTransform(object) :
 
 
 filename = '13324.csv'
-filename = '1805.csv'	
+#filename = '1805.csv'	
 data = pd.read_csv(filename)
 timeseries = list(data['X'])
 d = 4096; w= 64; haarFactor = 1/math.sqrt(2)
