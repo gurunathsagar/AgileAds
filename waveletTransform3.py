@@ -56,8 +56,6 @@ class Accuracy(object):
 		self.rmse = math.sqrt(sumSquares)
 		self.underAllocationPercent = (self.underAllocationPercent/float(n))*100
 		self.overAllocationPercent = (self.overAllocationPercent/float(n))*100
-		
-		
 		pass
 	def getErrors(self):
 		print "rmse:", self.rmse
@@ -167,35 +165,54 @@ class WaveletTransform(object) :
 			scaleNo-=1
 
 
+class timeseries(object):
+	def __init__(self,lengthTs=0):
+		self.ts = [5]*lengthTs
+		self.lengthTs = lengthTs
+	def updateTs(self, recentData):
+		n = len(recentData);i=0;j=0
+		while i< self.lengthTs - n:
+			ts[i]=tsi+n
+			i+=1
+		while j<n:
+			self.ts[i] = recentData[j]
+			i+=1;j+=1
+	def getTs(self):
+		return self.ts			    	
+
+d = 4096; w=64; haarFactor = 1/math.sqrt(2)
+
+ts = timeseries(lengthTs=d);n = ts.lengthTs
+"""
 filename = '13324.csv'
-#filename = '1805.csv'	
 data = pd.read_csv(filename)
-timeseries = list(data['X'])
-d = 4096; w= 64; haarFactor = 1/math.sqrt(2)
+timeseriesList = list(data['X'])
+a = timeseriesList[:d]
+ts.updateTs(a)
+actual_wValues = list(timeseriesList[d:d+w])
 xAxisRange_w = np.array([i for i in range(d, d+w)])
 xAxisRange_dw = np.array([i for i in range(d+w)])
-
-ts = list(timeseries[:d]);a=ts[:]
-n = len(ts); max_n = max(ts);min_n = min(ts)
-nScales = int(math.log(w,2))
-
+"""
+tsList = ts.ts[:];max_n = max(tsList);min_n = min(tsList)
 
 haar = WaveletTransform(d=d,w = w)
-
-haar.forwardTransform(ts=a);predicted_wValues=[];predictedPad5=[]
-haar.predictCoeffs(ts=a,ret=predicted_wValues)
-haar.predictCoeffs(ts=a,ret=predictedPad5,padPercent=5)
-haar.inverseTransform(ts=predicted_wValues)
-haar.inverseTransform(ts=predictedPad5)
-actual_wValues = list(timeseries[d:d+w])
-
-#Now for plotting the predicted values vs original values
+haar.forwardTransform(ts=tsList);
 
 
-plt.plot(xAxisRange_dw[4000:],timeseries[4000:d+w]) #Plotting the original timeseries wrt timeslots
+tsPredict0 = timeseries()
+tsPredict5 = timeseries()
 
-errors = Accuracy(actual_wValues, predicted_wValues)
-errorsPad5 = Accuracy(actual_wValues, predictedPad5)
+haar.predictCoeffs(ts=tsList,ret=tsPredict0.ts,padPercent=0)
+haar.predictCoeffs(ts=tsList,ret=tsPredict5.ts,padPercent=5)
+
+haar.inverseTransform(ts=tsPredict0.ts)
+haar.inverseTransform(ts=tsPredict5.ts)
+
+"""
+plt.plot(xAxisRange_dw[4000:d],ts.ts[4000:d]) #Plotting the original timeseries wrt timeslots
+
+errors = Accuracy(actual_wValues, tsPredict0.ts)
+errorsPad5 = Accuracy(actual_wValues, tsPredict5.ts)
 print "pad0"
 errors.getErrors()
 print "pad5"
@@ -203,39 +220,11 @@ errorsPad5.getErrors()
 
 #plotting the original values in window w vs predicted values
 plt.plot(xAxisRange_w,actual_wValues)
-plt.plot(xAxisRange_w,predicted_wValues)
-plt.plot(xAxisRange_w,predictedPad5)
+plt.plot(xAxisRange_w,tsPredict0.ts)
+plt.plot(xAxisRange_w,tsPredict5.ts)
 plt.show()
+"""
 
 
-"""		
-data = pd.read_csv(filename)
-timeseries = list(data['X'])
-d = 4096; w= 64; haarFactor = 1/math.sqrt(2)
-xAxisRange_w = np.array([i for i in range(d, d+w)])
-xAxisRange_dw = np.array([i for i in range(d+w)])
 
-ts = list(timeseries[:d]);a=ts[:]
-n = len(ts); max_n = max(ts);min_n = min(ts)
-nScales = int(math.log(w,2))
-
-
-haar = WaveletTransform(d=d,w = w)
-
-haar.forwardTransform(ts=a)
-predicted_wValues = haar.predictCoeffs(ts=a)
-haar.inverseTransform(ts=predicted_wValues)
-actual_wValues = list(timeseries[d:d+w])
-
-#Now for plotting the predicted values vs original values
-
-
-plt.plot(xAxisRange_dw[4000:],timeseries[4000:d+w]) #Plotting the original timeseries wrt timeslots
-
-#plotting the original values in window w vs predicted values
-plt.plot(xAxisRange_w,actual_wValues)
-plt.plot(xAxisRange_w,predicted_wValues)
-plt.show()"""
-#for i in b:
-#	print i
 
