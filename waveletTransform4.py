@@ -5,6 +5,8 @@ import pandas as pd
 import numpy as np
 import math
 from collections import Counter
+import socket
+import sys
 
 def max_index(arr):
 	index = 0;m = 0
@@ -181,49 +183,75 @@ class timeseries(object):
 		return self.ts			    	
 
 
+
+
+
+
+
+
+
+
+
+
 d = 4096; w=64; haarFactor = 1/math.sqrt(2)
 ts = timeseries(lengthTs=d);n = ts.lengthTs
-"""
-filename = '13324.csv'
-data = pd.read_csv(filename)
-timeseriesList = list(data['X'])
-a = timeseriesList[:d]
-ts.updateTs(a)
-actual_wValues = list(timeseriesList[d:d+w])
-xAxisRange_w = np.array([i for i in range(d, d+w)])
-xAxisRange_dw = np.array([i for i in range(d+w)])
-"""
-tsList = ts.ts[:];max_n = max(tsList);min_n = min(tsList)
 
-haar = WaveletTransform(d=d,w = w)
-haar.forwardTransform(ts=tsList);
-
-
-tsPredict0 = timeseries()
-tsPredict5 = timeseries()
-
-haar.predictCoeffs(ts=tsList,ret=tsPredict0.ts,padPercent=0)
-haar.predictCoeffs(ts=tsList,ret=tsPredict5.ts,padPercent=5)
-
-haar.inverseTransform(ts=tsPredict0.ts)
-haar.inverseTransform(ts=tsPredict5.ts)
 
 """
-plt.plot(xAxisRange_dw[4000:d],ts.ts[4000:d])
-errors = Accuracy(actual_wValues, tsPredict0.ts)
-errorsPad5 = Accuracy(actual_wValues, tsPredict5.ts)
-print "pad0"
-errors.getErrors()
-print "pad5"
-errorsPad5.getErrors()
-
-#plotting the original values in window w vs predicted values
-plt.plot(xAxisRange_w,actual_wValues)
-plt.plot(xAxisRange_w,tsPredict0.ts)
-plt.plot(xAxisRange_w,tsPredict5.ts)
-plt.show()
+Socket Server Program 
+http://www.binarytides.com/python-socket-programming-tutorial/
 """
+HOST = ''   # Symbolic name meaning all available interfaces
+PORT = 8888 # Arbitrary non-privileged port
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+print 'Socket created'
+
+try:
+    s.bind((HOST, PORT))
+except socket.error , msg:
+    print 'Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
+print 'Socket bind complete'
 
 
+while True:
+	s.listen(10)
+	print 'Socket now listening'
+
+	conn, addr = s.accept()
+	#display client information
+	print 'Connected with ' + addr[0] + ':' + str(addr[1])
+	data = ''
+	while True:
+		data += conn.recv(2048)
+		if '*' in data:
+			conn.close()
+			break
+
+	"""
+		The prediction Module gets the data. Close the TCP socket and process the data.
+		The first integer n represents how many resource usages are sent
+	"""
+	data = data.split('*')
+	n = int(data[0])
+	recentData = []
+	for i in range(1,n+1):
+		recentData.append(float(data[i]))			
+	
+	ts.updateTs(recentData)
+	#tsPredict0 = timeseries()
+	tsPredict5 = timeseries()
+	tsList = ts.ts[:];max_n = max(tsList);min_n = min(tsList)
+	haar = WaveletTransform(d=d,w = w)
+
+	haar.forwardTransform(ts=tsList);
+	#haar.predictCoeffs(ts=tsList,ret=tsPredict0.ts,padPercent=0)
+	haar.predictCoeffs(ts=tsList,ret=tsPredict5.ts,padPercent=5)
+
+	#haar.inverseTransform(ts=tsPredict0.ts)
+	haar.inverseTransform(ts=tsPredict5.ts)
+
+
+	
 
 
