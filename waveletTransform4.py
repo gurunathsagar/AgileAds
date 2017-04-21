@@ -21,11 +21,11 @@ class sloCheck(object):
 	def __init__(self,maxUsage, nTimes):
 		self.sloDefmaxUsage = maxUsage
 		self.sloDefn = nTimes
-		#By definition, SLO is violated if resource usage in a 2 minute interval is above maxUsage nTimes
+		#By definition, SLO is violated if resource usage in a 2 minute(64 units) interval is above maxUsage nTimes
 		self.nTimesSLOundetected=0
 	def isViolated(self, prediction, nlen,actual=None):
 		countP=0;countA=0;
-		for n in range(nlen):
+		for i in range(nlen):
 			if prediction[i]>self.sloDefmaxUsage:
 				countP+=1
 			if actual != None and actual[i]>self.sloDefmaxUsage:	
@@ -240,17 +240,24 @@ while True:
 	
 	ts.updateTs(recentData)
 	#tsPredict0 = timeseries()
-	tsPredict5 = timeseries()
+	tsPredict5 = []
 	tsList = ts.ts[:];max_n = max(tsList);min_n = min(tsList)
 	haar = WaveletTransform(d=d,w = w)
 
 	haar.forwardTransform(ts=tsList);
-	#haar.predictCoeffs(ts=tsList,ret=tsPredict0.ts,padPercent=0)
-	haar.predictCoeffs(ts=tsList,ret=tsPredict5.ts,padPercent=5)
+	#haar.predictCoeffs(ts=tsList,ret=tsPredict0,padPercent=0)
+	haar.predictCoeffs(ts=tsList,ret=tsPredict5,padPercent=5)
 
-	#haar.inverseTransform(ts=tsPredict0.ts)
-	haar.inverseTransform(ts=tsPredict5.ts)
+	#haar.inverseTransform(ts=tsPredict0)
+	haar.inverseTransform(ts=tsPredict5)
 
+	slo = sloCheck(maxUsage=75, nTimes=10)
+	isSloViolated = slo.isViolated(tsPredict5,len(tsPredict5))
+	if(isSloViolated):
+		#Trigger the VM Cloning
+		pass
+	
+	#plot Resource Usage vs Prediction
 
 	
 
