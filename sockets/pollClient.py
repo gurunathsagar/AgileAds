@@ -2,8 +2,8 @@ from time import sleep
 import sys
 import socket
 
-host = '127.0.0.1'
-port = 2000
+host = '152.46.17.210'
+port = 3000
 BUFFER_SIZE = 2000 
 #MESSAGE = raw_input("tcpClientA: Enter message/ Enter exit:")
 prev_idle = prev_total = prev_sum = 0
