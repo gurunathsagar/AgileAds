@@ -174,7 +174,7 @@ class timeseries(object):
 	def updateTs(self, recentData):
 		n = len(recentData);i=0;j=0
 		while i< self.lengthTs - n:
-			ts[i]=ts[i]+n
+			self.ts[i]=self.ts[i]+n
 			i+=1
 		while j<n:
 			self.ts[i] = recentData[j]
