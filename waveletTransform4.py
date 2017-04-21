@@ -232,7 +232,7 @@ while True:
 		The prediction Module gets the data. Close the TCP socket and process the data.
 		The first integer n represents how many resource usages are sent
 	"""
-	data = data.split('*')
+	data = data.split('#')
 	n = int(data[0])
 	recentData = []
 	for i in range(1,n+1):
