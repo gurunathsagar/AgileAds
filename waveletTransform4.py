@@ -174,7 +174,7 @@ class timeseries(object):
 	def updateTs(self, recentData):
 		n = len(recentData);i=0;j=0
 		while i< self.lengthTs - n:
-			ts[i]=tsi+n
+			ts[i]=ts[i]+n
 			i+=1
 		while j<n:
 			self.ts[i] = recentData[j]
@@ -232,6 +232,7 @@ while True:
 		The prediction Module gets the data. Close the TCP socket and process the data.
 		The first integer n represents how many resource usages are sent
 	"""
+	print data
 	data = data.split('#')
 	n = int(data[0])
 	recentData = []
