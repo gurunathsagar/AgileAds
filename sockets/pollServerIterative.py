@@ -147,6 +147,7 @@ while True:
     (conn, (ip,port)) = tcpServer.accept() 
     connList.append(conn)
     obj = LatestValues()
+    obj.ip = ip
     qList.append(obj)
     #newthread = ResourceCollector(conn) 
     #newthread.start() 
