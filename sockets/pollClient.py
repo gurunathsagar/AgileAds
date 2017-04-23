@@ -10,8 +10,8 @@ import os
 #     def run(self):
 #         os.system('./cloneVM ' + nameofprocess)
 
-
-host = '152.46.19.73'
+#This is the master ip address and port number where each slave sends usage statistics
+host = '152.46.17.1'
 port = 3000
 BUFFER_SIZE = 2000 
 #MESSAGE = raw_input("tcpClientA: Enter message/ Enter exit:")
