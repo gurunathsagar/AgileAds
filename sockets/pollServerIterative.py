@@ -3,12 +3,29 @@ import socket
 from threading import Thread 
 from SocketServer import ThreadingMixIn 
 
-def sendToPredictor(rAvgArray):
+class LatestValues():
+    def __init__(self):
+        self.list = []
+        self.ip = ''
+
+    def insertValue(self, value):
+        if len(self.list) >= 64:
+            self.list.pop(0)
+        
+        self.list.append(value)
+
+    def returnAverage(self):
+        if len(self.list) > 0:
+            return sum(self.list) / float(len(self.list))
+
+def sendToPredictor(rAvgArray, vmName, ip):
     
     sendString = str(len(rAvgArray))+"#"
 
     for values in rAvgArray:
         sendString += str(values) + "#"
+
+    sendString += vmName + "#" + ip + "#"
 
     sendString += "*"
 
@@ -21,25 +38,10 @@ def sendToPredictor(rAvgArray):
 
 class ResourceManager(Thread):
 
-    def __init__(self, connList):
+    def __init__(self, connList, qList):
         Thread.__init__(self)
         self.connList = connList
-
-    def sendToPredictor(rAvgArray):
-        
-        sendString = str(len(rAvgArray))+"#"
-
-        for values in rAvgArray:
-            sendString += str(values) + "#"
-
-        sendString += "*"
-
-        tcpClientA = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        status = tcpClientA.connect_ex((PredictionHost, PredictionPort))
-
-        tcpClientA.send(sendString)
-
-        tcpClientA.close()
+        self.qList = qList
 
     def run(self):
 
@@ -69,12 +71,35 @@ class ResourceManager(Thread):
 
             rAvg = 0.0
 
+            averages = []
+            vmNames = []
+            for i in range(len(connListCopy)):
+                averages.append(qList[i].returnAverage())
+            leastLoaded = averages.index(min(averages))
+
+            for i in range(len(connListCopy)):
+                readyString = "ready#"
+                connListCopy[i].send(readyString)
+                recvData = connListCopy[i].recv(1024)
+                parts = recvData.split("#")
+                rVal = float(parts[0])
+                vmNames.append(parts[1])
+                qList[i].insertValue(float(rVal))
+                rAvg += float(rVal)
+
+            rAvg /= len(connListCopy)
+            print "avg = ", rAvg, " no. of clients open = ", len(connListCopy)
+            rAvgArray.append(rAvg)
+            sendToPredictor(rAvgArray, vmNames[leastLoaded], qList[leastLoaded].ip)
+            sleep(2)
+
+"""
             for conn in connListCopy:
                 conn.send("ready#")
                 rVal = conn.recv(1024)
                 rAvg += float(rVal)
+"""
 
-            rAvg /= len(connListCopy)
 
             #for i in range(len(resourceThreads)):
                 #resourceThreads[i].start()
@@ -90,78 +115,7 @@ class ResourceManager(Thread):
 
             # avgResourceVal /= len(resourceValue)
 
-            print "avg = ", rAvg, " no. of clients open = ", len(connListCopy)
 
-            rAvgArray.append(rAvg)
-
-            sendToPredictor(rAvgArray)
-
-
-            sleep(2)
-
-
-# class ResourceCollector(Thread):
-
-#     def __init__(self, conn):
-#         Thread.__init__(self)
-#         self.conn = conn
-#         # self.i = i
-#         self.receivedValue = 0.0
-#         # #self.resourceValue = resourceValue
-
-#     def run(self):
-#         print "Sending ready message"
-#         self.conn.send("ready#")
-#         print "Sent ready message"
-#         recvValue = conn.recv(2048)
-#         print "Received value from client as: ", recvValue
-#         self.receivedValue = float(recvValue)
-
-
-# # Multithreaded Python server : TCP Server Socket Thread Pool
-# class ClientThread(Thread): 
- 
-#     def __init__(self,ip,port): 
-#         Thread.__init__(self) 
-#         self.ip = ip 
-#         self.port = port 
-#         print "[+] New server socket thread started for " + ip + ":" + str(port)
-#         fname = ''
-#         file_handle = ''
-        
-#     def run(self): 
-#         data = ''
-#         while True : 
-#             data += conn.recv(2048)
-#             if 'nameofprocess' in data:
-#                 recvBuffer = data.split('#')
-#                 filename = recvBuffer[1:]
-#                 if recvBuffer[-1]:
-#                     data = recvBuffer[-1]
-#                 else:
-#                     data = ''
-#                 #print 'filename is ', filename[0]
-#                 #print 'data: ', data
-#                 fname = filename[0]
-#                 file_handle = open(fname, 'a')
-#                 continue
-#             file_handle = open(fname, 'a')
-#             #file_handle.write(str(data))
-#             recvBuffer = data.split('#')
-#             #print "Recv Buffer as follows: ", recvBuffer
-#             if recvBuffer[-1]:
-#                 data = recvBuffer[-1]
-#             else:
-#                 data = ''
-#             for values in recvBuffer:
-#                 if values:
-#                     print "Server received data:", values, 'fname = ', fname
-#                     file_handle.write(str(values)+"\n")
-#             file_handle.close()
-#             #MESSAGE = raw_input("Multithreaded Python server : Enter Response from Server/Enter exit:")
-#             #if MESSAGE == 'exit':
-#                 #break
-#             #conn.send()  # echo 
  
 # Multithreaded Python server : TCP Server Socket Program Stub
 TCP_IP = '0.0.0.0' 
@@ -178,9 +132,12 @@ threads = []
 resourceThreads = []
 
 connList = []
-newthread = ResourceManager(connList)
+qList = []
+newthread = ResourceManager(connList, qList)
 newthread.start()
 threads.append(newthread)
+
+
 
 
 while True: 
@@ -189,6 +146,8 @@ while True:
 
     (conn, (ip,port)) = tcpServer.accept() 
     connList.append(conn)
+    obj = LatestValues()
+    qList.append(obj)
     #newthread = ResourceCollector(conn) 
     #newthread.start() 
     #threads.append(newthread) 

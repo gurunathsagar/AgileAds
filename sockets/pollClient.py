@@ -1,8 +1,17 @@
 from time import sleep
 import sys
 import socket
+import os
 
-host = '152.46.17.210'
+# class StartClone(Thread):
+#     def __init__(self, nameofprocess):
+#         self.nameofprocess = nameofprocess
+
+#     def run(self):
+#         os.system('./cloneVM ' + nameofprocess)
+
+
+host = '127.0.0.1'
 port = 3000
 BUFFER_SIZE = 2000 
 #MESSAGE = raw_input("tcpClientA: Enter message/ Enter exit:")
@@ -30,7 +39,12 @@ while True:
             data = tcpClientA.recv(1024)
         print 'Executed recv'
         if "ready" in data:
-            print "Received Ready signal from Server"    
+            print "Received Ready signal from Server"  
+            
+            # if "trigger" in data:
+            #     newthread = StartClone(sys.argv[2])
+            #     newthread.start()
+
             with open('/proc/stat') as file:
             	line = file.readline()
             	line.strip()
@@ -61,7 +75,7 @@ while True:
             print('%5.1f%%' % idleCPU)
             print('%5.1f%%' % procCpuPercent)
 
-            MESSAGE = str(procCpuPercent)
+            MESSAGE = str(procCpuPercent) + "#" +sys.argv[2]
             try:
                 tcpClientA.send(MESSAGE)
             except socket.error, e:
