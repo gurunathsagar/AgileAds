@@ -238,7 +238,9 @@ while True:
 	recentData = []
 	for i in range(1,n+1):
 		recentData.append(float(data[i]))			
-	
+	i+=1
+	vmName = data[i];i+=1
+	hostIp = data[i];
 	ts.updateTs(recentData)
 	#tsPredict0 = timeseries()
 	tsPredict5 = []
@@ -255,7 +257,15 @@ while True:
 	slo = sloCheck(maxUsage=75, nTimes=10)
 	isSloViolated = slo.isViolated(tsPredict5,len(tsPredict5))
 	if(isSloViolated):
-		#Trigger the VM Cloning
+		#Trigger the VM Cloning. Send a reqest to host hostIp at port number 9000
+		hostPort = '9000'
+		tcpSocketHost = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		status = tcpSocketHost.connect_ex((hostIp, hostPort))
+		if status:
+			print 'could not establish a connection'
+			tcpSocketHost.close()
+		else:
+			stringTosend = ''+vmName+'#*'
 		pass
 	
 	#plot Resource Usage vs Prediction

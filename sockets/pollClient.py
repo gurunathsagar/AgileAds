@@ -11,7 +11,7 @@ import os
 #         os.system('./cloneVM ' + nameofprocess)
 
 
-host = '127.0.0.1'
+host = '152.46.19.73'
 port = 3000
 BUFFER_SIZE = 2000 
 #MESSAGE = raw_input("tcpClientA: Enter message/ Enter exit:")
