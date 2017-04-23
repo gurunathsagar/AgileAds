@@ -258,7 +258,7 @@ while True:
 	isSloViolated = slo.isViolated(tsPredict5,len(tsPredict5))
 	if(isSloViolated):
 		#Trigger the VM Cloning. Send a reqest to host hostIp at port number 9000
-		hostPort = '9000'
+		hostPort = 9000
 		tcpSocketHost = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		status = tcpSocketHost.connect_ex((hostIp, hostPort))
 		if status:

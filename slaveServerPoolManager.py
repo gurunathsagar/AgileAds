@@ -3,7 +3,7 @@ import socket
 import os
 
 TCP_IP = '0.0.0.0'
-TCP_PORT = '9000'
+TCP_PORT = 9000
 
 BUFFER_SIZE = 1024
 
