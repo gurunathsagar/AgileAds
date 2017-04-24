@@ -30,9 +30,13 @@ def sendToPredictor(rAvgArray, vmName, ip):
     sendString += "*"
 
     tcpClientA = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    status = tcpClientA.connect_ex((PredictionHost, PredictionPort))
 
-    tcpClientA.send(sendString)
+    try:
+        status = tcpClientA.connect_ex((PredictionHost, PredictionPort))
+        tcpClientA.send(sendString)
+
+    except socket.error, exc:
+        print "Error Connecting to Prediction Module. Not sending this value"
 
     tcpClientA.close()
 
@@ -46,6 +50,7 @@ class ResourceManager(Thread):
     def run(self):
 
         print "Resource manager spawned"
+        fileHandle = open('file.csv','a+')
         while True:
 
             if len(connList) == 0:
@@ -79,19 +84,25 @@ class ResourceManager(Thread):
 
             for i in range(len(connListCopy)):
                 readyString = "ready#"
-                connListCopy[i].send(readyString)
-                recvData = connListCopy[i].recv(1024)
-                parts = recvData.split("#")
-                rVal = float(parts[0])
-                vmNames.append(parts[1])
-                qList[i].insertValue(float(rVal))
-                rAvg += float(rVal)
+                try:    
+                    connListCopy[i].send(readyString)
+                    recvData = connListCopy[i].recv(1024)
+                    parts = recvData.split("#")
+                    rVal = float(parts[0])
+                    vmNames.append(parts[1])
+                    qList[i].insertValue(float(rVal))
+                    rAvg += float(rVal)
+                except socket.error, exc:
+                    print "Unable to get latest data"
 
             rAvg /= len(connListCopy)
+            fileHandle.write(str(rAvg) + "\n")
             print "avg = ", rAvg, " no. of clients open = ", len(connListCopy)
             rAvgArray.append(rAvg)
             sendToPredictor(rAvgArray, vmNames[leastLoaded], qList[leastLoaded].ip)
             sleep(2)
+
+        fileHandle.close()
 
 """
             for conn in connListCopy:
@@ -147,6 +158,7 @@ while True:
     (conn, (ip,port)) = tcpServer.accept() 
     connList.append(conn)
     obj = LatestValues()
+    obj.ip = ip
     qList.append(obj)
     #newthread = ResourceCollector(conn) 
     #newthread.start() 
