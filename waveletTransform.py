@@ -285,7 +285,7 @@ while True:
 	plt.clf()
 	usagePlot = plt.plot(dx[4000:], ts.ts[4000:],'b')
 	predictedPlot = plt.plot(wx, tsPredict5,'g')
-	predictedPlot = plt.plot(wx, tsPredict0,'o')
+	predictedPlot = plt.plot(wx, tsPredict0)
 	maxUsagePlot = plt.plot(maxx[4000:],dMaxUsage[4000:],'r')
 	
 	
