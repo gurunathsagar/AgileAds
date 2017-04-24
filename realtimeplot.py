@@ -1,18 +1,16 @@
 import numpy as np
-import matplotlib.pyplot as plt
+from matplotlib import pyplot as plt
 
-x = np.arange(0, 10, 0.1)
-y = np.sin(x)
-
+plt.axis([-50,50,0,10000])
 plt.ion()
-ax = plt.gca()
-ax.set_autoscale_on(True)
-line, = ax.plot(x, y)
+plt.show()
 
-for i in xrange(100):
-    line.set_ydata(y)
-    ax.relim()
-    ax.autoscale_view(True,True,True)
-    plt.draw()
-    y=y*1.1
-    plt.pause(0.1)
+x = np.arange(-50, 1000)
+for pow in range(1,1000):   # plot x^1, x^2, ..., x^4
+	y = [Xi**pow for Xi in x]
+	plt.plot(x, y)
+	plt.draw()
+	plt.pause(0.001)
+#input("Press [enter] to continue.")
+
+
