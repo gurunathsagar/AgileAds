@@ -1,21 +1,18 @@
+import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.animation as animation
-import time
 
-fig = plt.figure()
-ax1 = fig.add_subplot(1,1,1)
+x = np.arange(0, 10, 0.1)
+y = np.sin(x)
 
-def animate(i):
-    pullData = open("sampleText.txt","r").read()
-    dataArray = pullData.split('\n')
-    xar = []
-    yar = []
-    for eachLine in dataArray:
-        if len(eachLine)>1:
-            x,y = eachLine.split(',')
-            xar.append(int(x))
-            yar.append(int(y))
-    ax1.clear()
-    ax1.plot(xar,yar)
-ani = animation.FuncAnimation(fig, animate, interval=1000)
-plt.show()
+plt.ion()
+ax = plt.gca()
+ax.set_autoscale_on(True)
+line, = ax.plot(x, y)
+
+for i in xrange(100):
+    line.set_ydata(y)
+    ax.relim()
+    ax.autoscale_view(True,True,True)
+    plt.draw()
+    y=y*1.1
+    plt.pause(0.1)

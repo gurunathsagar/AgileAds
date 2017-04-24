@@ -172,14 +172,18 @@ class timeseries(object):
 	def __init__(self,lengthTs=0):
 		self.ts = [5]*lengthTs
 		self.lengthTs = lengthTs
-	def updateTs(self, recentData):
+	def updateTs(self, recentData,hlPlot):
+		x = hlPlot.get_ydata()
 		n = len(recentData);i=0;j=0
 		while i< self.lengthTs - n:
 			self.ts[i]=self.ts[i]+n
+			x[i] = self.ts[i]+n
 			i+=1
 		while j<n:
 			self.ts[i] = recentData[j]
+			x[i] = recentData[j]
 			i+=1;j+=1
+		plt.draw()
 	def getTs(self):
 		return self.ts			    	
 
@@ -201,9 +205,10 @@ dMaxUsage = [75]*(d+w)
 i=0
 fig, ax = plt.subplots()
 usagePlot, = ax.plot(dx,ts.ts)
-def animate(data):
-    usagePlot.set_ydata(data)  # update the data
-    return usagePlot,
+
+
+
+
 
 #Init only required for blitting to give a clean slate.
 
@@ -242,6 +247,7 @@ while True:
 		The prediction Module gets the data. Close the TCP socket and process the data.
 		The first integer n represents how many resource usages are sent
 	"""
+	usagePlot, = plt.plot(dx, ts.ts)
 	print data
 	data = data.split('#')
 	n = int(data[0])
@@ -251,11 +257,11 @@ while True:
 	i+=1
 	vmName = data[i];i+=1
 	hostIp = data[i];
-	ts.updateTs(recentData)
+	ts.updateTs(recentData,usagePlot)
 	#tsPredict0 = timeseries()
 	tsPredict5 = []
 	tsList = ts.ts[:];max_n = max(tsList);min_n = min(tsList)
-	haar = WaveletTransform(d=d,w = w)
+	haarusagePlot = WaveletTransform(d=d,w = w)
 
 	haar.forwardTransform(ts=tsList);
 	#haar.predictCoeffs(ts=tsList,ret=tsPredict0,padPercent=0)
@@ -284,14 +290,15 @@ while True:
 	#predictedPlot = ax.plot(wx, tsPredict5)
 	#maxUsagePlot = ax.plot(maxx,dMaxUsage)
 
-	plt.setp(usagePlot, color='b', linewidth=1.0)
+	#plt.setp(usagePlot, color='b', linewidth=1.0)
 	#plt.setp(predictPlot, color='g', linewidth=1.0)
 	#plt.setp(maxUsagePlot, color='r', linewidth=1.0)
-
-	ani = animation.FuncAnimation(fig, animate, dx, interval=25)
-	plt.show()
+	
+	#ani = animation.FuncAnimation(fig, animate, dx, interval=2)
+	#plt.show()
     #sleep(2)
 	
+
 
 
 		
