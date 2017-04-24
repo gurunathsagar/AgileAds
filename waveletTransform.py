@@ -254,16 +254,16 @@ while True:
 	vmName = data[i];i+=1
 	hostIp = data[i];
 	ts.updateTs(recentData)
-	#tsPredict0 = timeseries()
+	tsPredict0 = []
 	tsPredict5 = []
 	tsList = ts.ts[:];max_n = max(tsList);min_n = min(tsList)
 	haar = WaveletTransform(d=d,w = w)
 
 	haar.forwardTransform(ts=tsList);
-	#haar.predictCoeffs(ts=tsList,ret=tsPredict0,padPercent=0)
+	haar.predictCoeffs(ts=tsList,ret=tsPredict0,padPercent=0)
 	haar.predictCoeffs(ts=tsList,ret=tsPredict5,padPercent=5)
 
-	#haar.inverseTransform(ts=tsPredict0)
+	haar.inverseTransform(ts=tsPredict0)
 	haar.inverseTransform(ts=tsPredict5)
 
 	slo = sloCheck(maxUsage=75, nTimes=10)
@@ -283,9 +283,10 @@ while True:
 	#plot Resource Usage vs Prediction
 	#print ts.ts[4080:]
 	plt.clf()
-	usagePlot = plt.plot(dx[4050:], ts.ts[4050:],'b')
+	usagePlot = plt.plot(dx[2000:], ts.ts[2000:],'b')
 	predictedPlot = plt.plot(wx, tsPredict5,'g')
-	maxUsagePlot = plt.plot(maxx[4050:],dMaxUsage[4050:],'r')
+	predictedPlot = plt.plot(wx, tsPredict0,'o')
+	maxUsagePlot = plt.plot(maxx[2000:],dMaxUsage[2000:],'r')
 	
 	
 	#ani = animation.FuncAnimation(fig, animate, dx, interval=2)
