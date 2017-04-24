@@ -196,8 +196,8 @@ d = 4096; w=64; haarFactor = 1/math.sqrt(2)
 ts = timeseries(lengthTs=d);n = ts.lengthTs
 dx = np.arange(0,d,1)
 wx = np.arange(d,d+w,1)
-maxx = np.arange(0,d+w)
-dMaxUsage = [75]*(d+w)
+maxx = [0,d+w-1]
+dMaxUsage = [75]*(2)
 i=0
 plt.ion()
 plt.show()
@@ -283,10 +283,10 @@ while True:
 	#plot Resource Usage vs Prediction
 	#print ts.ts[4080:]
 	plt.clf()
-	usagePlot = plt.plot(dx[2000:], ts.ts[2000:],'b')
+	usagePlot = plt.plot(dx[4000:], ts.ts[4000:],'b')
 	predictedPlot = plt.plot(wx, tsPredict5,'g')
 	predictedPlot = plt.plot(wx, tsPredict0,'o')
-	maxUsagePlot = plt.plot(maxx[2000:],dMaxUsage[2000:],'r')
+	maxUsagePlot = plt.plot(maxx[4000:],dMaxUsage[4000:],'r')
 	
 	
 	#ani = animation.FuncAnimation(fig, animate, dx, interval=2)
