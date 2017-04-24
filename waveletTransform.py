@@ -210,10 +210,11 @@ def changeMaxUsageLevel(threadName, q):
 		data = ''
 		while True:
 			data += conn.recv(2048)
-			if '#' in data:
+			if '*' in data:
 				conn.close()
 				break
 		data = data.strip('#')
+		print data
 		level = int(data[0]); times = int(data[1])
 		queueLock.acquire()
 		q[0]=level;q[1]=times

@@ -5,7 +5,7 @@ from SocketServer import ThreadingMixIn
 PredictionPort = 8080
 PredictionHost = '152.46.17.1'
 
-sendString = '30#15#*' 
+sendString = '75#15#*' 
 tcpClientA = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 try:
 	status = tcpClientA.connect_ex((PredictionHost, PredictionPort))
