@@ -21,3 +21,5 @@ while True:
 			conn.close()
 	print data
 	data = data.split('#')
+	vmName = data[0]
+	

@@ -241,7 +241,7 @@ ts = timeseries(lengthTs=d);n = ts.lengthTs
 dx = np.arange(0,d,1)
 wx = np.arange(d,d+w,1)
 maxx = np.arange(0,d+w,1)
-dM = [75,10]
+dM = [90,50]
 dMaxUsage = [dM[0]]*(d+w)
 plt.ion()
 plt.show()
@@ -323,6 +323,9 @@ while True:
 			tcpSocketHost.close()
 		else:
 			stringTosend = ''+vmName+'#*'
+			tcpSocketHost.send(stringTosend)
+			tcpSocketHost.close()
+			print "Cloning vm ", vmName
 		pass
 	
 	#plot Resource Usage vs Prediction
