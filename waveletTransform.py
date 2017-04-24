@@ -213,7 +213,7 @@ def changeMaxUsageLevel(threadName, q):
 			if '*' in data:
 				conn.close()
 				break
-		data = data.strip('#')
+		data = data.split('#')
 		print data
 		level = int(data[0]); times = int(data[1])
 		queueLock.acquire()
@@ -334,7 +334,7 @@ while True:
 	if slo.sloDefmaxUsage not in dMaxUsage:
 		dMaxUsage=[slo.sloDefmaxUsage]*(d+w)
 	
-	maxUsagePlot = plt.plot(maxx,dMaxUsage,'r')
+	maxUsagePlot = plt.plot(maxx[4000:],dMaxUsage[4000:],'r')
 	
 	
 	#ani = animation.FuncAnimation(fig, animate, dx, interval=2)
