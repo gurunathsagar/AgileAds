@@ -8,6 +8,11 @@ import math
 from collections import Counter
 import socket
 import sys
+import Queue
+import threading
+import time
+
+
 
 def max_index(arr):
 	index = 0;m = 0
@@ -17,6 +22,7 @@ def max_index(arr):
 			index = i;
 			m = arr[i]
 	return index
+
 
 class sloCheck(object):
 	def __init__(self,maxUsage, nTimes):
@@ -185,6 +191,48 @@ class timeseries(object):
 
 
 
+def changeMaxUsageLevel(threadName, q):
+	HOST = ''   # Symbolic name meaning all available interfaces
+	PORT = 8080 # Arbitrary non-privileged port
+
+	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	print 'MaxUsage Socket Created'
+	try:
+		s.bind((HOST, PORT))
+	except socket.error , msg:
+		print 'MaxUsage Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
+	print 'MaxUsage Socket bind complete'
+
+	while True:
+		s.listen(10)
+		conn, addr = s.accept()
+		#display client information
+		data = ''
+		while True:
+			data += conn.recv(2048)
+			if '#' in data:
+				conn.close()
+				break
+		data = data.strip('#')
+		level = int(data[0])
+		queueLock.acquire()
+		for i in range(len(q)):
+			q[i]=level
+		queueLock.release()
+
+
+#https://www.tutorialspoint.com/python/python_multithreading.htm
+class myThread (threading.Thread):
+    def __init__(self, threadID, name, q):
+        threading.Thread.__init__(self)
+        self.threadID = threadID
+        self.name = name
+        self.q = q
+    def run(self):
+        print "Starting " + self.name
+        changeMaxUsageLevel(self.name, self.q)
+        print "Exiting " + self.name
+
 
 
 
@@ -192,12 +240,15 @@ d = 4096; w=64; haarFactor = 1/math.sqrt(2)
 ts = timeseries(lengthTs=d);n = ts.lengthTs
 dx = np.arange(0,d,1)
 wx = np.arange(d,d+w,1)
-maxx = np.arange(0,d+w,1)0
+maxx = np.arange(0,d+w,1)
 dMaxUsage = [75]*(d+w)
 plt.ion()
 plt.show()
 
-
+queueLock = threading.Lock()
+threadId = 1
+thread = myThread(threadId, 'maxUsage Thread', dMaxUsage)
+thread.start()
 
 
 """
@@ -278,15 +329,16 @@ while True:
 	usagePlot = plt.plot(dx[4000:], ts.ts[4000:],'b')
 	predictedPlot = plt.plot(wx, tsPredict5,'g')
 	predictedPlot = plt.plot(wx, tsPredict0)
-	maxUsagePlot = plt.plot(maxx[4000:],dMaxUsage[4000:],'r')
-	
+	queueLock.acquire()
+	maxUsagePlot = plt.plot(maxx,dMaxUsage,'r')
+	queueLock.release()
 	
 	#ani = animation.FuncAnimation(fig, animate, dx, interval=2)
 	plt.draw()
 	plt.pause(0.001)
 	
 
-
+thread.join()
 
 		
 
