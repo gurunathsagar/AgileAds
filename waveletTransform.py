@@ -216,8 +216,7 @@ def changeMaxUsageLevel(threadName, q):
 		data = data.strip('#')
 		level = int(data[0])
 		queueLock.acquire()
-		for i in range(len(q)):
-			q[i]=level
+		q[0]=level
 		queueLock.release()
 
 
@@ -241,13 +240,14 @@ ts = timeseries(lengthTs=d);n = ts.lengthTs
 dx = np.arange(0,d,1)
 wx = np.arange(d,d+w,1)
 maxx = np.arange(0,d+w,1)
-dMaxUsage = [75]*(d+w)
+dM = [75]
+dMaxUsage = [dM[0]]*(d+w)
 plt.ion()
 plt.show()
 
 queueLock = threading.Lock()
 threadId = 1
-thread = myThread(threadId, 'maxUsage Thread', dMaxUsage)
+thread = myThread(threadId, 'maxUsage Thread', dM)
 thread.start()
 
 
@@ -330,8 +330,11 @@ while True:
 	predictedPlot = plt.plot(wx, tsPredict5,'g')
 	predictedPlot = plt.plot(wx, tsPredict0)
 	queueLock.acquire()
-	maxUsagePlot = plt.plot(maxx,dMaxUsage,'r')
+	if dM[0] not in dMaxUsage:
+		dMaxUsage=[dM[0]]*(d+w)
 	queueLock.release()
+	maxUsagePlot = plt.plot(maxx,dMaxUsage,'r')
+	
 	
 	#ani = animation.FuncAnimation(fig, animate, dx, interval=2)
 	plt.draw()
