@@ -200,7 +200,7 @@ maxx = np.arange(0,d+w)
 dMaxUsage = [75]*(d+w)
 i=0
 fig, ax = plt.subplots()
-usagePlot = ax.plot(dx,ts.ts)
+usagePlot, = ax.plot(dx,ts.ts)
 def animate(data):
     usagePlot.set_ydata(data)  # update the data
     return usagePlot,
@@ -289,8 +289,11 @@ while True:
 	#plt.setp(maxUsagePlot, color='r', linewidth=1.0)
 
 	ani = animation.FuncAnimation(fig, animate, dx, interval=25)
-    #sleep(2)
 	plt.show()
+    #sleep(2)
+	
+
+
 		
 
 
