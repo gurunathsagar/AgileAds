@@ -172,8 +172,7 @@ class timeseries(object):
 	def __init__(self,lengthTs=0):
 		self.ts = [5]*lengthTs
 		self.lengthTs = lengthTs
-	def updateTs(self, recentData,hlPlot):
-		x = hlPlot.get_ydata()
+	def updateTs(self, recentData):
 		n = len(recentData);i=0;j=0
 		while i< self.lengthTs - n:
 			self.ts[i]=self.ts[i]+n
@@ -183,7 +182,6 @@ class timeseries(object):
 			self.ts[i] = recentData[j]
 			x[i] = recentData[j]
 			i+=1;j+=1
-		plt.draw()
 	def getTs(self):
 		return self.ts			    	
 
@@ -203,8 +201,7 @@ wx = np.arange(d,d+w,1)
 maxx = np.arange(0,d+w)
 dMaxUsage = [75]*(d+w)
 i=0
-fig, ax = plt.subplots()
-usagePlot, = ax.plot(dx,ts.ts)
+
 
 
 
@@ -257,7 +254,7 @@ while True:
 	i+=1
 	vmName = data[i];i+=1
 	hostIp = data[i];
-	ts.updateTs(recentData,usagePlot)
+	ts.updateTs(recentData)
 	#tsPredict0 = timeseries()
 	tsPredict5 = []
 	tsList = ts.ts[:];max_n = max(tsList);min_n = min(tsList)
@@ -286,16 +283,16 @@ while True:
 	
 	#plot Resource Usage vs Prediction
 	
+	usagePlot = plt.plot(dx, ts.ts)
+	predictedPlot = plt.plot(wx, tsPredict5)
+	maxUsagePlot = plt.plot(maxx,dMaxUsage)
 
-	#predictedPlot = ax.plot(wx, tsPredict5)
-	#maxUsagePlot = ax.plot(maxx,dMaxUsage)
-
-	#plt.setp(usagePlot, color='b', linewidth=1.0)
-	#plt.setp(predictPlot, color='g', linewidth=1.0)
-	#plt.setp(maxUsagePlot, color='r', linewidth=1.0)
+	plt.setp(usagePlot, color='b', linewidth=1.0)
+	plt.setp(predictPlot, color='g', linewidth=1.0)
+	plt.setp(maxUsagePlot, color='r', linewidth=1.0)
 	
 	#ani = animation.FuncAnimation(fig, animate, dx, interval=2)
-	#plt.show()
+	plt.show()
     #sleep(2)
 	
 
