@@ -283,12 +283,12 @@ while True:
 	#plot Resource Usage vs Prediction
 	
 	usagePlot = plt.plot(dx, ts.ts)
-	predictedPlot = plt.plot(wx, tsPredict5)
+	#predictedPlot = plt.plot(wx, tsPredict5)
 	maxUsagePlot = plt.plot(maxx,dMaxUsage)
 
 	plt.setp(usagePlot, color='b', linewidth=1.0)
-	plt.setp(predictedPlot, color='g', linewidth=1.0)
-	plt.setp(maxUsagePlot, color='r', linewidth=1.0)
+	#plt.setp(predictedPlot, color='g', linewidth=1.0)
+	#plt.setp(maxUsagePlot, color='r', linewidth=1.0)
 	
 	#ani = animation.FuncAnimation(fig, animate, dx, interval=2)
 	plt.draw()
