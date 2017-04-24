@@ -330,8 +330,8 @@ while True:
 	usagePlot = plt.plot(dx[4000:], ts.ts[4000:],'b')
 	predictedPlot = plt.plot(wx, tsPredict5,'g')
 	predictedPlot = plt.plot(wx, tsPredict0)
-	if slo.maxUsage not in dMaxUsage:
-		dMaxUsage=[slo.maxUsage]*(d+w)
+	if slo.sloDefmaxUsage not in dMaxUsage:
+		dMaxUsage=[slo.sloDefmaxUsage]*(d+w)
 	
 	maxUsagePlot = plt.plot(maxx,dMaxUsage,'r')
 	
