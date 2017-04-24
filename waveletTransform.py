@@ -282,6 +282,7 @@ while True:
 	
 	#plot Resource Usage vs Prediction
 	#print ts.ts[4080:]
+	plt.clf()
 	usagePlot = plt.plot(dx[4050:], ts.ts[4050:],'b')
 	#predictedPlot = plt.plot(wx, tsPredict5)
 	maxUsagePlot = plt.plot(maxx[4050:],dMaxUsage[4050:],'r')
