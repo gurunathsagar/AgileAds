@@ -199,7 +199,8 @@ wx = np.arange(d,d+w,1)
 maxx = np.arange(0,d+w)
 dMaxUsage = [75]*(d+w)
 i=0
-
+fig, ax = plt.subplots()
+usagePlot = ax.plot(dx,ts.ts)
 def animate(data):
     usagePlot.set_ydata(data)  # update the data
     return usagePlot,
@@ -279,8 +280,7 @@ while True:
 	
 	#plot Resource Usage vs Prediction
 	
-	fig, ax = plt.subplots()
-	usagePlot = ax.plot(dx,ts.ts)
+
 	#predictedPlot = ax.plot(wx, tsPredict5)
 	#maxUsagePlot = ax.plot(maxx,dMaxUsage)
 
