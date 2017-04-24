@@ -188,25 +188,17 @@ class timeseries(object):
 
 
 
-
-
-
-
 d = 4096; w=64; haarFactor = 1/math.sqrt(2)
 ts = timeseries(lengthTs=d);n = ts.lengthTs
 dx = np.arange(0,d,1)
 wx = np.arange(d,d+w,1)
-maxx = [0,d+w-1]
-dMaxUsage = [75]*(2)
-i=0
+maxx = np.arange(0,d+w,1)0
+dMaxUsage = [75]*(d+w)
 plt.ion()
 plt.show()
 
 
 
-
-
-#Init only required for blitting to give a clean slate.
 
 """
 Socket Server Program 
