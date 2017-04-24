@@ -1,6 +1,7 @@
 #References for Haar Transform
 #https://www.math.cornell.edu/~numb3rs/spulido/Numb3rs_107/Numb3rs_107.html
 import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 import pandas as pd
 import numpy as np
 import math
@@ -191,11 +192,19 @@ class timeseries(object):
 
 
 
-
-
 d = 4096; w=64; haarFactor = 1/math.sqrt(2)
 ts = timeseries(lengthTs=d);n = ts.lengthTs
+dx = np.arange(0,d,1)
+wx = np.arange(d,d+w,1)
+maxx = np.arange(0,d+w)
+dMaxUsage = [75]*(d+w)
+i=0
 
+def animate(data):
+    usagePlot.set_ydata(data)  # update the data
+    return usagePlot,
+
+#Init only required for blitting to give a clean slate.
 
 """
 Socket Server Program 
@@ -227,7 +236,7 @@ while True:
 		if '*' in data:
 			conn.close()
 			break
-
+    
 	"""
 		The prediction Module gets the data. Close the TCP socket and process the data.
 		The first integer n represents how many resource usages are sent
@@ -269,7 +278,19 @@ while True:
 		pass
 	
 	#plot Resource Usage vs Prediction
-
 	
+	fig, ax = plt.subplots()
+	usagePlot = ax.plot(dx,ts.ts)
+	#predictedPlot = ax.plot(wx, tsPredict5)
+	#maxUsagePlot = ax.plot(maxx,dMaxUsage)
+
+	plt.setp(usagePlot, color='b', linewidth=1.0)
+	#plt.setp(predictPlot, color='g', linewidth=1.0)
+	#plt.setp(maxUsagePlot, color='r', linewidth=1.0)
+
+	ani = animation.FuncAnimation(fig, animate, dx, interval=25)
+    #sleep(2)
+	plt.show()
+		
 
 
