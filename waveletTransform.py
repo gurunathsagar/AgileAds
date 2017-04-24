@@ -214,9 +214,9 @@ def changeMaxUsageLevel(threadName, q):
 				conn.close()
 				break
 		data = data.strip('#')
-		level = int(data[0])
+		level = int(data[0]); times = int(data[1])
 		queueLock.acquire()
-		q[0]=level
+		q[0]=level;q[1]=times
 		queueLock.release()
 
 
@@ -240,7 +240,7 @@ ts = timeseries(lengthTs=d);n = ts.lengthTs
 dx = np.arange(0,d,1)
 wx = np.arange(d,d+w,1)
 maxx = np.arange(0,d+w,1)
-dM = [75]
+dM = [75,10]
 dMaxUsage = [dM[0]]*(d+w)
 plt.ion()
 plt.show()
@@ -308,8 +308,9 @@ while True:
 
 	haar.inverseTransform(ts=tsPredict0)
 	haar.inverseTransform(ts=tsPredict5)
-
-	slo = sloCheck(maxUsage=75, nTimes=10)
+	queueLock.acquire()
+	slo = sloCheck(maxUsage=dM[0], nTimes=dM[1])
+	queueLock.release()
 	isSloViolated = slo.isViolated(tsPredict5,len(tsPredict5))
 	if(isSloViolated):
 		#Trigger the VM Cloning. Send a reqest to host hostIp at port number 9000
@@ -329,10 +330,9 @@ while True:
 	usagePlot = plt.plot(dx[4000:], ts.ts[4000:],'b')
 	predictedPlot = plt.plot(wx, tsPredict5,'g')
 	predictedPlot = plt.plot(wx, tsPredict0)
-	queueLock.acquire()
-	if dM[0] not in dMaxUsage:
-		dMaxUsage=[dM[0]]*(d+w)
-	queueLock.release()
+	if slo.maxUsage not in dMaxUsage:
+		dMaxUsage=[slo.maxUsage]*(d+w)
+	
 	maxUsagePlot = plt.plot(maxx,dMaxUsage,'r')
 	
 	
