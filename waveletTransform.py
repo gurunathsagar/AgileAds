@@ -199,7 +199,8 @@ wx = np.arange(d,d+w,1)
 maxx = np.arange(0,d+w)
 dMaxUsage = [75]*(d+w)
 i=0
-
+plt.ion()
+plt.show()
 
 
 
@@ -290,8 +291,8 @@ while True:
 	plt.setp(maxUsagePlot, color='r', linewidth=1.0)
 	
 	#ani = animation.FuncAnimation(fig, animate, dx, interval=2)
-	plt.show()
-    #sleep(2)
+	plt.draw()
+	plt.pause(0.001)
 	
 
 
