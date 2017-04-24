@@ -261,7 +261,7 @@ while True:
 	#tsPredict0 = timeseries()
 	tsPredict5 = []
 	tsList = ts.ts[:];max_n = max(tsList);min_n = min(tsList)
-	haarusagePlot = WaveletTransform(d=d,w = w)
+	haar = WaveletTransform(d=d,w = w)
 
 	haar.forwardTransform(ts=tsList);
 	#haar.predictCoeffs(ts=tsList,ret=tsPredict0,padPercent=0)
