@@ -243,7 +243,7 @@ while True:
 		The prediction Module gets the data. Close the TCP socket and process the data.
 		The first integer n represents how many resource usages are sent
 	"""
-	usagePlot, = plt.plot(dx, ts.ts)
+	
 	print data
 	data = data.split('#')
 	n = int(data[0])
