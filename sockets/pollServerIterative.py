@@ -7,6 +7,7 @@ class LatestValues():
     def __init__(self):
         self.list = []
         self.ip = ''
+        self.badCall = 0
 
     def insertValue(self, value):
         if len(self.list) >= 64:
@@ -86,26 +87,25 @@ class ResourceManager(Thread):
 
             for i in range(len(connListCopy)):
                 readyString = "ready#"
-                errorCount = 0
                 deletedConnection = -1
                 try:    
                     connListCopy[i].send(readyString)
                     try:
                         recvData = connListCopy[i].recv(1024)
                     except socket.error, exc:
-                        errorCount += 1
-                        if errorCount >= 3:
+                        qList[i].badCall += 1
+                        if qList[i].badCall >= 3:
                             connList[i].close()
                             connListCopy.pop(i)
                             connList.pop(i)
                             qList.pop(i)
                             deletedConnection = i
                             continue
-                    errorCount = 0
+                    qList[i].badCall = 0
                     if not recvData:
-                        errorCount += 1
+                        qList[i].badCall += 1
                         continue
-                        if errorCount >= 3:
+                        if qList[i].badCall >= 3:
                             connList[i].close()
                             connListCopy.pop(i)
                             connList.pop(i)
@@ -113,7 +113,7 @@ class ResourceManager(Thread):
                             deletedConnection = i
                             print 'deleting ', i
                             continue
-                    errorCount = 0
+                    qList[i].badCall = 0
                     dataNotRead = False
                     parts = recvData.split("#")
                     print i, 'value received = ', parts[0], 'ip = ', qList[i].ip
