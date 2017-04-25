@@ -84,10 +84,10 @@ class ResourceManager(Thread):
             leastLoaded = averages.index(min(averages))
 
             dataNotRead = True
+            deletedConnection = -1
 
             for i in range(len(connListCopy)):
                 readyString = "ready#"
-                deletedConnection = -1
                 try:    
                     connListCopy[i].send(readyString)
                     try:
