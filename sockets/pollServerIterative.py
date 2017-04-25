@@ -84,21 +84,21 @@ class ResourceManager(Thread):
 
             for i in range(len(connListCopy)):
                 readyString = "ready#"
-				errorCount = 0
+                errorCount = 0
                 try:    
                     connListCopy[i].send(readyString)
-					try:
-						recvData = connListCopy[i].recv(1024)
-					except socket.error, exc:
-						errorCount += 1
-						if errCount >= 3:
-							connList[i].close()
-							connListCopy.pop(i)
-							connList.pop(i)
-							qList.pop(i)
-					errorCount = 0
+                    try:
+                        recvData = connListCopy[i].recv(1024)
+                    except socket.error, exc:
+                        errorCount += 1
+                        if errCount >= 3:
+                            connList[i].close()
+                            connListCopy.pop(i)
+                            connList.pop(i)
+                            qList.pop(i)
+                    errorCount = 0
                     parts = recvData.split("#")
-					print i, 'value received = ', parts[0], 'ip = ', qList[i].ip
+                    print i, 'value received = ', parts[0], 'ip = ', qList[i].ip
                     rVal = float(parts[0])
                     vmNames.append(parts[1])
                     qList[i].insertValue(float(rVal))
