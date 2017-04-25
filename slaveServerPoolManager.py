@@ -23,7 +23,8 @@ tcpServer.bind((TCP_IP, TCP_PORT))
 
 while True:
 	tcpServer.listen(10)
-	(conn, (ip,port)) = tcpServer.accept() 
+	conn, addr = tcpServer.accept()
+	#(conn, (ip,port)) = tcpServer.accept() 
 	data = ''
 	while True:
 		data += conn.recv(1024)
