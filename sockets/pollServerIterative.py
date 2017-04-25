@@ -126,9 +126,9 @@ class ResourceManager(Thread):
                     qList[i].badCall += 1
                     if qList[i].badCall >= 3:
                         connList[i].close()
-                        connListCopy.pop(i)
-                        connList.pop(i)
-                        qList.pop(i)
+                        #connListCopy.pop(i)
+                        #connList.pop(i)
+                        #qList.pop(i)
                         deletedConnection = i
                         continue
 
