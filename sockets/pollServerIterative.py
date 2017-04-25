@@ -85,6 +85,7 @@ class ResourceManager(Thread):
             for i in range(len(connListCopy)):
                 readyString = "ready#"
                 errorCount = 0
+                deletedConnection = -1
                 try:    
                     connListCopy[i].send(readyString)
                     try:
@@ -96,7 +97,9 @@ class ResourceManager(Thread):
                             connListCopy.pop(i)
                             connList.pop(i)
                             qList.pop(i)
+                            deletedConnection = i
                             continue
+                    errorCount = 0
                     if not recvData:
                         errorCount += 1
                         continue
@@ -105,6 +108,7 @@ class ResourceManager(Thread):
                             connListCopy.pop(i)
                             connList.pop(i)
                             qList.pop(i)
+                            deletedConnection = i
                             continue
                     errorCount = 0
                     parts = recvData.split("#")
@@ -115,6 +119,11 @@ class ResourceManager(Thread):
                     rAvg += float(rVal)
                 except socket.error, exc:
                     print "Unable to get latest data"
+
+            if len(connListCopy)==0 or deletedConnection==leastLoaded:
+                if len(connListCopy)==0:
+                    print 'No connections available'
+                continue
 
             rAvg /= len(connListCopy)
             fileHandle.write(str(rAvg) + "\n")
