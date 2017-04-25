@@ -2,6 +2,7 @@ from time import sleep
 import sys
 import socket
 import os
+import errno
 
 # class StartClone(Thread):
 #     def __init__(self, nameofprocess):
@@ -52,14 +53,20 @@ while True:
             	words = line.split()[1:]
             	columns = [float(obj) for obj in words]
 
-            with open('/proc/'+sys.argv[1]+'/stat') as file2:
-                line = file2.readline()
-                line.strip()
-                words = line.split()
-                col_14 = words[13]
-                col_15 = words[14]
-                #print '\n', col_14, '&', col_15, '&', prev_sum
-                procCpu = int(col_15) + int(col_14)
+            try:
+                with open('/proc/'+sys.argv[1]+'/stat') as file2:
+                    line = file2.readline()
+                    line.strip()
+                    words = line.split()
+                    col_14 = words[13]
+                    col_15 = words[14]
+                    #print '\n', col_14, '&', col_15, '&', prev_sum
+                    procCpu = int(col_15) + int(col_14)
+            except IOError:
+
+                print 'Process shut down. Closing client'
+                tcpClientA.close()
+                sys.exit()
 
             procCpu_d = procCpu - prev_sum
             print '\n', procCpu_d
