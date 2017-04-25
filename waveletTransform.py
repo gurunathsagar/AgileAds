@@ -189,7 +189,7 @@ class timeseries(object):
 		self.ts = [5]*lengthTs
 		self.lengthTs = lengthTs
 		try:
-			name = 'average4096.csv'
+			name = 'sockets/average4096.csv'
 			tfList = list(pd.read_csv(name,header=None)[0])
 			j = len(tfList)-1; i = lengthTs-1
 			while(i>0 and j>0):
