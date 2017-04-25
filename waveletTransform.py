@@ -340,13 +340,13 @@ while True:
 	#plot Resource Usage vs Prediction
 	#print ts.ts[4080:]
 	plt.clf()
-	usagePlot = plt.plot(dx[4000:], ts.ts[4000:],'b')
+	usagePlot = plt.plot(dx[3000:], ts.ts[3000:],'b')
 	predictedPlot = plt.plot(wx, tsPredict5,'g')
 	predictedPlot = plt.plot(wx, tsPredict0)
 	if slo.sloDefmaxUsage not in dMaxUsage:
 		dMaxUsage=[slo.sloDefmaxUsage]*(d+w)
 	
-	maxUsagePlot = plt.plot(maxx[4000:],dMaxUsage[4000:],'r')
+	maxUsagePlot = plt.plot(maxx[3000:],dMaxUsage[3000:],'r')
 	
 	
 	#ani = animation.FuncAnimation(fig, animate, dx, interval=2)
