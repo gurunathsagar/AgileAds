@@ -35,7 +35,7 @@ while True:
 	username = hostDict[sys.argv[1]]['user']
 	serverIp = hostDict[sys.argv[1]]['ip']
 	try:
-		call(['bash', 'run.sh',vmName, username, serverIp])
+		call(['bash', 'stopClone.sh',vmName, username, serverIp])
 		print "slave successfully scaled vm:",vmName
 	except:
 		print "Error in scaling up vm", vmName
