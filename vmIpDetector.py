@@ -24,8 +24,8 @@ def detectVMIP(portCount, macListMap, IpPortMap):
 			addedIps.append(ip)
 
 	for ip in addedIps:
-		#os.system("sudo ./addForwarding.sh " + HOST_PUBLIC_IP + " " + str(portCount) + " " + ip)
-		print("sudo ./addForwarding.sh " + HOST_PUBLIC_IP + " " + str(portCount) + " " + ip)
+		os.system("sudo ./addForwarding.sh " + HOST_PUBLIC_IP + " " + str(portCount) + " " + ip)
+		#print("sudo ./addForwarding.sh " + HOST_PUBLIC_IP + " " + str(portCount) + " " + ip)
 		IpPortMap[ip] = str(portCount)
 		portCount += 1
 
