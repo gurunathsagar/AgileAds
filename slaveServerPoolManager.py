@@ -13,7 +13,7 @@ hostDict = {"host2":{"user":"arakhade",
 					},
 			"host1":{
 						"user":"ghanams",
-						"ip":"152.1.13.88"
+						"ip":"152.46.17.63"
 					}
 			}
 
