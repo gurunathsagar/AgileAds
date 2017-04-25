@@ -124,13 +124,13 @@ class ResourceManager(Thread):
                 except socket.error, exc:
                     print "Unable to get latest data"
                     qList[i].badCall += 1
-                        if qList[i].badCall >= 3:
-                            connList[i].close()
-                            connListCopy.pop(i)
-                            connList.pop(i)
-                            qList.pop(i)
-                            deletedConnection = i
-                            continue
+                    if qList[i].badCall >= 3:
+                        connList[i].close()
+                        connListCopy.pop(i)
+                        connList.pop(i)
+                        qList.pop(i)
+                        deletedConnection = i
+                        continue
 
             if len(connListCopy)==0 or deletedConnection==leastLoaded or dataNotRead :
                 if len(connListCopy)==0:
