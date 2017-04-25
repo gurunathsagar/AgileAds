@@ -96,6 +96,15 @@ class ResourceManager(Thread):
                             connListCopy.pop(i)
                             connList.pop(i)
                             qList.pop(i)
+                            continue
+                    if not recvData:
+                        errorCount += 1
+                        if errCount >= 3:
+                            connList[i].close()
+                            connListCopy.pop(i)
+                            connList.pop(i)
+                            qList.pop(i)
+                            continue
                     errorCount = 0
                     parts = recvData.split("#")
                     print i, 'value received = ', parts[0], 'ip = ', qList[i].ip
