@@ -91,7 +91,7 @@ class ResourceManager(Thread):
                         recvData = connListCopy[i].recv(1024)
                     except socket.error, exc:
                         errorCount += 1
-                        if errCount >= 3:
+                        if errorCount >= 3:
                             connList[i].close()
                             connListCopy.pop(i)
                             connList.pop(i)
@@ -99,7 +99,7 @@ class ResourceManager(Thread):
                             continue
                     if not recvData:
                         errorCount += 1
-                        if errCount >= 3:
+                        if errorCount >= 3:
                             connList[i].close()
                             connListCopy.pop(i)
                             connList.pop(i)
