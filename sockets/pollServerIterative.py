@@ -92,26 +92,26 @@ class ResourceManager(Thread):
                     try:
                         recvData = connListCopy[i].recv(1024)
                     except socket.error, exc:
-                        qList[i].badCall += 1
-                        if qList[i].badCall >= 3:
-                            connList[i].close()
-                            connListCopy.pop(i)
-                            connList.pop(i)
-                            qList.pop(i)
-                            deletedConnection = i
-                            continue
+                        #qList[i].badCall += 1
+                        #if qList[i].badCall >= 3:
+                        connList[i].close()
+                        connListCopy.pop(i)
+                        connList.pop(i)
+                        qList.pop(i)
+                        deletedConnection = i
+                        continue
                     qList[i].badCall = 0
                     if not recvData:
-                        qList[i].badCall += 1
+                        #qList[i].badCall += 1
+                        #continue
+                        #if qList[i].badCall >= 3:
+                        connList[i].close()
+                        connListCopy.pop(i)
+                        connList.pop(i)
+                        qList.pop(i)
+                        deletedConnection = i
+                        print 'deleting ', i
                         continue
-                        if qList[i].badCall >= 3:
-                            connList[i].close()
-                            connListCopy.pop(i)
-                            connList.pop(i)
-                            qList.pop(i)
-                            deletedConnection = i
-                            print 'deleting ', i
-                            continue
                     qList[i].badCall = 0
                     dataNotRead = False
                     parts = recvData.split("#")
@@ -124,13 +124,13 @@ class ResourceManager(Thread):
                 except socket.error, exc:
                     print "Unable to get latest data"
                     qList[i].badCall += 1
-                    if qList[i].badCall >= 3:
-                        connList[i].close()
-                        #connListCopy.pop(i)
-                        #connList.pop(i)
-                        #qList.pop(i)
-                        deletedConnection = i
-                        continue
+                    #if qList[i].badCall >= 3:
+                    connList[i].close()
+                    connListCopy.pop(i)
+                    connList.pop(i)
+                    qList.pop(i)
+                    deletedConnection = i
+                    continue
 
             if len(connListCopy)==0 or deletedConnection!=-1 or dataNotRead :
                 if len(connListCopy)==0:
