@@ -29,9 +29,13 @@ while True:
 		data += conn.recv(1024)
 		if '*' in data:
 			conn.close()
-	print data
 	data = data.split('#')
 	vmName = data[0]
+	print "slave trying to scale up vm:",vmName
 	username = hostDict['host2']['user']
 	serverIp = hostDict['host2']['ip']
-	call(['bash', 'run.sh',vmName, username, serverIp])
+	try:
+		call(['bash', 'run.sh',vmName, username, serverIp])
+		print "slave successfully scaled vm:",vmName
+	except:
+		print "Error in scaling up vm", vmName
