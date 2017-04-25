@@ -132,7 +132,7 @@ class ResourceManager(Thread):
                         deletedConnection = i
                         continue
 
-            if len(connListCopy)==0 or deletedConnection==leastLoaded or dataNotRead :
+            if len(connListCopy)==0 or deletedConnection!=-1 or dataNotRead :
                 if len(connListCopy)==0:
                     print 'No connections available'
                     sleep(2)
