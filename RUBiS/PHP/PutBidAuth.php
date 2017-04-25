@@ -9,7 +9,7 @@
     $itemId = $HTTP_POST_VARS['itemId'];
     if ($itemId == null)
     {
-      $itemId = $HTTP_GET_VARS['itemId'];
+      $itemId = $_GET['itemId'];
       if ($itemId == null)
       {
          printError($scriptName, $startTime, "Authentification for bidding", "You must provide an item identifier!<br>");

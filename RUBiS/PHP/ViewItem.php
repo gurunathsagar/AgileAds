@@ -9,7 +9,7 @@
     $itemId = $HTTP_POST_VARS['itemId'];
     if ($itemId == null)
     {
-      $itemId = $HTTP_GET_VARS['itemId'];
+      $itemId = $_GET['itemId'];
       if ($itemId == null)
       {
          printError($scriptName, $startTime, "Viewing item", "You must provide an item identifier!<br>");

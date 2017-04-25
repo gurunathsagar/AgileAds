@@ -9,7 +9,7 @@
     $to = $HTTP_POST_VARS['to'];
     if ($to == null)
     {
-      $to = $HTTP_GET_VARS['to'];
+      $to = $_GET['to'];
       if ($to == null)
       {
          printError($scriptName, $startTime, "PutComment", "You must provide a 'to user' identifier!<br>");
@@ -20,7 +20,7 @@
     $from = $HTTP_POST_VARS['from'];
     if ($from == null)
     {
-      $from = $HTTP_GET_VARS['from'];
+      $from = $_GET['from'];
       if ($from == null)
       {
          printError($scriptName, $startTime, "PutComment", "You must provide a 'from user' identifier!<br>");
@@ -31,7 +31,7 @@
     $itemId = $HTTP_POST_VARS['itemId'];
     if ($itemId == null)
     {
-      $itemId = $HTTP_GET_VARS['itemId'];
+      $itemId = $_GET['itemId'];
       if ($itemId == null)
       {
          printError($scriptName, $startTime, "PutComment", "You must provide an item identifier!<br>");
@@ -42,7 +42,7 @@
     $rating = $HTTP_POST_VARS['rating'];
     if ($rating == null)
     {
-      $rating = $HTTP_GET_VARS['rating'];
+      $rating = $_GET['rating'];
       if ($rating == null)
       {
          printError($scriptName, $startTime, "StoreComment", "<h3>You must provide a user identifier!<br></h3>");
@@ -53,7 +53,7 @@
     $comment = $HTTP_POST_VARS['comment'];
     if ($comment == null)
     {
-      $comment = $HTTP_GET_VARS['comment'];
+      $comment = $_GET['comment'];
       if ($comment == null)
       {
          printError($scriptName, $startTime, "StoreComment", "<h3>You must provide a comment !<br></h3>");

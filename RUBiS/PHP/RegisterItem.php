@@ -9,7 +9,7 @@
     $userId = $HTTP_POST_VARS['userId'];
     if ($userId == null)
     {
-      $userId = $HTTP_GET_VARS['userId'];
+      $userId = $_GET['userId'];
       if ($userId == null)
       {
          printError($scriptName, $startTime, "RegisterItem", "<h3>You must provide a user identifier!<br></h3>");
@@ -20,7 +20,7 @@
     $categoryId = $HTTP_POST_VARS['categoryId'];
     if ($categoryId == null)
     {
-      $categoryId = $HTTP_GET_VARS['categoryId'];
+      $categoryId = $_GET['categoryId'];
       if ($categoryId == null)
       {
          printError($scriptName, $startTime, "RegisterItem", "<h3>You must provide a category identifier !<br></h3>");
@@ -31,7 +31,7 @@
     $name = $HTTP_POST_VARS['name'];
     if ($name == null)
     {
-      $name = $HTTP_GET_VARS['name'];
+      $name = $_GET['name'];
       if ($name == null)
       {
          printError($scriptName, $startTime, "RegisterItem", "<h3>You must provide an item name !<br></h3>");
@@ -42,7 +42,7 @@
     $initialPrice = $HTTP_POST_VARS['initialPrice'];
     if ($initialPrice == null)
     {
-      $initialPrice = $HTTP_GET_VARS['initialPrice'];
+      $initialPrice = $_GET['initialPrice'];
       if ($initialPrice == null)
       {
          printError($scriptName, $startTime, "RegisterItem", "<h3>You must provide an initial price !<br></h3>");
@@ -53,7 +53,7 @@
     $reservePrice = $HTTP_POST_VARS['reservePrice'];
     if ($reservePrice == null)
     {
-      $reservePrice = $HTTP_GET_VARS['reservePrice'];
+      $reservePrice = $_GET['reservePrice'];
       if ($reservePrice == null)
       {
          printError($scriptName, $startTime, "RegisterItem", "<h3>You must provide a reserve price !<br></h3>");
@@ -64,7 +64,7 @@
     $buyNow = $HTTP_POST_VARS['buyNow'];
     if ($buyNow == null)
     {
-      $buyNow = $HTTP_GET_VARS['buyNow'];
+      $buyNow = $_GET['buyNow'];
       if ($buyNow == null)
       {
          printError($scriptName, $startTime, "RegisterItem", "<h3>You must provide a Buy Now price !<br></h3>");
@@ -75,7 +75,7 @@
     $duration = $HTTP_POST_VARS['duration'];
     if ($duration == null)
     {
-      $duration = $HTTP_GET_VARS['duration'];
+      $duration = $_GET['duration'];
       if ($duration == null)
       {
          printError($scriptName, $startTime, "RegisterItem", "<h3>You must provide a duration !<br></h3>");
@@ -86,7 +86,7 @@
     $qty = $HTTP_POST_VARS['quantity'];
     if ($qty == null)
     {
-      $qty = $HTTP_GET_VARS['quantity'];
+      $qty = $_GET['quantity'];
       if ($qty == null)
       {
          printError($scriptName, $startTime, "RegisterItem", "<h3>You must provide a quantity !<br></h3>");
@@ -97,7 +97,7 @@
     $description = $HTTP_POST_VARS['description'];
     if ($description == null)
     {
-      $description = $HTTP_GET_VARS['description'];
+      $description = $_GET['description'];
       if ($description == null)
         $description = "No description";
     }

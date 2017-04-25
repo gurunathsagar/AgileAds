@@ -9,7 +9,7 @@
     $regionId = $HTTP_POST_VARS['region'];
     if ($regionId == null)
     {
-      $regionId = $HTTP_GET_VARS['region'];
+      $regionId = $_GET['region'];
       if ($regionId == null)
       {
          printError($scriptName, $startTime, "Search Items By Region", "You must provide a region!<br>");
@@ -20,7 +20,7 @@
     $categoryId = $HTTP_POST_VARS['category'];
     if ($categoryId == null)
     {
-      $categoryId = $HTTP_GET_VARS['category'];
+      $categoryId = $_GET['category'];
       if ($categoryId == null)
       {
          printError($scriptName, $startTime, "Search Items By Region", "You must provide a category identifier!<br>");
@@ -31,7 +31,7 @@
     $page = $HTTP_POST_VARS['page'];
     if ($page == null)
     {
-      $page = $HTTP_GET_VARS['page'];
+      $page = $_GET['page'];
       if ($page == null)
         $page = 0;
     }
@@ -39,7 +39,7 @@
     $nbOfItems = $HTTP_POST_VARS['nbOfItems'];
     if ($nbOfItems == null)
     {
-      $nbOfItems = $HTTP_GET_VARS['nbOfItems'];
+      $nbOfItems = $_GET['nbOfItems'];
       if ($nbOfItems == null)
         $nbOfItems = 25;
     }
