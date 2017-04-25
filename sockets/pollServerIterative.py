@@ -123,10 +123,19 @@ class ResourceManager(Thread):
                     rAvg += float(rVal)
                 except socket.error, exc:
                     print "Unable to get latest data"
+                    qList[i].badCall += 1
+                        if qList[i].badCall >= 3:
+                            connList[i].close()
+                            connListCopy.pop(i)
+                            connList.pop(i)
+                            qList.pop(i)
+                            deletedConnection = i
+                            continue
 
             if len(connListCopy)==0 or deletedConnection==leastLoaded or dataNotRead :
                 if len(connListCopy)==0:
                     print 'No connections available'
+                    sleep(2)
                 print "Not sending value to Predictor"
                 continue
 
