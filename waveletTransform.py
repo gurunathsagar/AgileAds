@@ -44,7 +44,9 @@ class sloCheck(object):
 				#SLO was not detected. resulted in actual SLO
 				self.nTimesSLOundetected+=1
 		return False
-		
+	def sloParametersUpdate(self,maxUsage, nTimes):
+		self.sloDefmaxUsage = maxUsage
+		self.sloDefn = nTimes
 
 
 class Accuracy(object):
@@ -250,7 +252,8 @@ ts = timeseries(lengthTs=d);n = ts.lengthTs
 dx = np.arange(0,d,1)
 wx = np.arange(d,d+w,1)
 maxx = np.arange(0,d+w,1)
-dM = [90,50]
+dM = [100,65]
+slo = sloCheck(maxUsage=dM[0], nTimes=dM[1])
 dMaxUsage = [dM[0]]*(d+w)
 plt.ion()
 plt.show()
@@ -319,7 +322,7 @@ while True:
 	haar.inverseTransform(ts=tsPredict0)
 	haar.inverseTransform(ts=tsPredict5)
 	queueLock.acquire()
-	slo = sloCheck(maxUsage=dM[0], nTimes=dM[1])
+	slo.sloParametersUpdate(maxUsage=dM[0], nTimes=dM[1]);# = sloCheck(maxUsage=dM[0], nTimes=dM[1])
 	queueLock.release()
 	isSloViolated = slo.isViolated(tsPredict5,len(tsPredict5))
 	if(isSloViolated):
