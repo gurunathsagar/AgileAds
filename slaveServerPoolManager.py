@@ -32,8 +32,8 @@ while True:
 	data = data.split('#')
 	vmName = data[0]
 	print "slave trying to scale up vm:",vmName
-	username = hostDict['host2']['user']
-	serverIp = hostDict['host2']['ip']
+	username = hostDict[sys.argv[1]]['user']
+	serverIp = hostDict[sys.argv[1]]['ip']
 	try:
 		call(['bash', 'run.sh',vmName, username, serverIp])
 		print "slave successfully scaled vm:",vmName
