@@ -8,6 +8,7 @@ class LatestValues():
         self.list = []
         self.ip = ''
         self.badCall = 0
+        self.vmName = ''
 
     def insertValue(self, value):
         if len(self.list) >= 64:
@@ -117,6 +118,7 @@ class ResourceManager(Thread):
                     print i, 'value received = ', parts[0], 'ip = ', qList[i].ip
                     rVal = float(parts[0])
                     vmNames.append(parts[1])
+                    qList[i].vmName = parts[1]
                     qList[i].insertValue(float(rVal))
                     rAvg += float(rVal)
                 except socket.error, exc:
@@ -145,7 +147,7 @@ class ResourceManager(Thread):
             fileHandle.write(str(rAvg) + "\n")
             print "avg = ", rAvg, " no. of clients open = ", len(connListCopy)
             rAvgArray.append(rAvg)
-            sendToPredictor(rAvgArray, vmNames[leastLoaded], qList[leastLoaded].ip)
+            sendToPredictor(rAvgArray, qList[leastLoaded].vmName, qList[leastLoaded].ip)
             sleep(2)
 
         fileHandle.close()
