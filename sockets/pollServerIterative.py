@@ -84,7 +84,8 @@ class ResourceManager(Thread):
 
             dataNotRead = True
             deletedConnection = -1
-"""
+
+            """
             for i in range(len(connListCopy)):
                 readyString = "ready#"
                 try:    
@@ -130,8 +131,7 @@ class ResourceManager(Thread):
                     connList.pop(i)
                     qList.pop(i)
                     deletedConnection = i
-                    continue
-"""
+                    continue"""
             i = 0
             while i < len(connListCopy):
                 readyString = "ready#"
@@ -170,7 +170,7 @@ class ResourceManager(Thread):
                     qList[i].insertValue(float(rVal))
                     rAvg += float(rVal)
                     i = i + 1
-                    
+
                 except socket.error, exc:
                     print "Unable to get latest data"
                     qList[i].badCall += 1
