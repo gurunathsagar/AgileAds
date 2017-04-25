@@ -30,6 +30,7 @@ class sloCheck(object):
 		self.sloDefn = nTimes
 		#By definition, SLO is violated if resource usage in a 2 minute(64 units) interval is above maxUsage nTimes
 		self.nTimesSLOundetected=0
+		self.repetitions = 0
 	def isViolated(self, prediction, nlen,actual=None):
 		countP=0;countA=0;
 		for i in range(nlen):
@@ -37,14 +38,23 @@ class sloCheck(object):
 				countP+=1
 			if actual != None and actual[i]>self.sloDefmaxUsage:	
 				countA+=1
+			print "Number of times usage predicted above level:", countP
+			#print "usage:",self.sloDefmaxUsage, "Times detected:",self.sloDefn 
 			if(countP>self.sloDefn):
-				#SLO predicted, return True
+				#SLO predicted, increment count
+				self.repetitions+=1
+			else:
+				self.repetitions=0
+			if self.repetitions >=3:
+				self.repetitions = 0
 				return True
 			if(countA > self.sloDefn):
 				#SLO was not detected. resulted in actual SLO
 				self.nTimesSLOundetected+=1
 		return False
-		
+	def sloParametersUpdate(self,maxUsage, nTimes):
+		self.sloDefmaxUsage = maxUsage
+		self.sloDefn = nTimes
 
 
 class Accuracy(object):
@@ -178,6 +188,15 @@ class timeseries(object):
 	def __init__(self,lengthTs=0):
 		self.ts = [5]*lengthTs
 		self.lengthTs = lengthTs
+		try:
+			name = 'sockets/average4096.csv'
+			tfList = list(pd.read_csv(name,header=None)[0])
+			j = len(tfList)-1; i = lengthTs-1
+			while(i>0 and j>0):
+				self.ts[i]=int(tfList[j])
+				i-=1;j-=1
+		except:
+			print "Could not open initial file"
 	def updateTs(self, recentData):
 		n = len(recentData);i=0;j=0
 		while i< self.lengthTs - n:
@@ -241,7 +260,8 @@ ts = timeseries(lengthTs=d);n = ts.lengthTs
 dx = np.arange(0,d,1)
 wx = np.arange(d,d+w,1)
 maxx = np.arange(0,d+w,1)
-dM = [90,50]
+dM = [100,65]
+slo = sloCheck(maxUsage=dM[0], nTimes=dM[1])
 dMaxUsage = [dM[0]]*(d+w)
 plt.ion()
 plt.show()
@@ -250,7 +270,7 @@ queueLock = threading.Lock()
 threadId = 1
 thread = myThread(threadId, 'maxUsage Thread', dM)
 thread.start()
-
+vmbootupTime = 0
 
 """
 Socket Server Program 
@@ -266,7 +286,7 @@ try:
     s.bind((HOST, PORT))
 except socket.error , msg:
     print 'Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
-print 'Socket bind complete'
+#print 'Socket bind complete'
 
 
 while True:
@@ -310,34 +330,39 @@ while True:
 	haar.inverseTransform(ts=tsPredict0)
 	haar.inverseTransform(ts=tsPredict5)
 	queueLock.acquire()
-	slo = sloCheck(maxUsage=dM[0], nTimes=dM[1])
+	slo.sloParametersUpdate(maxUsage=dM[0], nTimes=dM[1]);# = sloCheck(maxUsage=dM[0], nTimes=dM[1])
 	queueLock.release()
 	isSloViolated = slo.isViolated(tsPredict5,len(tsPredict5))
+	if(vmbootupTime!=0):
+		vmbootupTime+=1
+		vmbootupTime=vmbootupTime%128
 	if(isSloViolated):
 		#Trigger the VM Cloning. Send a reqest to host hostIp at port number 9000
-		hostPort = 9000
-		tcpSocketHost = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		status = tcpSocketHost.connect_ex((hostIp, hostPort))
-		if status:
-			print 'could not establish a connection'
-			tcpSocketHost.close()
-		else:
-			stringTosend = ''+vmName+'#*'
-			tcpSocketHost.send(stringTosend)
-			tcpSocketHost.close()
-			print "Cloning vm ", vmName
-		pass
+		if(vmbootupTime == 0):
+			vmbootupTime+=1
+			hostPort = 9000
+			tcpSocketHost = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			status = tcpSocketHost.connect_ex((hostIp, hostPort))
+			if status:
+				print 'could not establish a connection'
+				tcpSocketHost.close()
+			else:
+				stringTosend = ''+vmName+'#*'
+				tcpSocketHost.send(stringTosend)
+				tcpSocketHost.close()
+				print "Cloning vm ", vmName
+			pass
 	
 	#plot Resource Usage vs Prediction
 	#print ts.ts[4080:]
 	plt.clf()
-	usagePlot = plt.plot(dx[4000:], ts.ts[4000:],'b')
+	usagePlot = plt.plot(dx[3000:], ts.ts[3000:],'b')
 	predictedPlot = plt.plot(wx, tsPredict5,'g')
 	predictedPlot = plt.plot(wx, tsPredict0)
 	if slo.sloDefmaxUsage not in dMaxUsage:
 		dMaxUsage=[slo.sloDefmaxUsage]*(d+w)
 	
-	maxUsagePlot = plt.plot(maxx[4000:],dMaxUsage[4000:],'r')
+	maxUsagePlot = plt.plot(maxx[3000:],dMaxUsage[3000:],'r')
 	
 	
 	#ani = animation.FuncAnimation(fig, animate, dx, interval=2)
