@@ -38,8 +38,8 @@ class sloCheck(object):
 				countP+=1
 			if actual != None and actual[i]>self.sloDefmaxUsage:	
 				countA+=1
-			print "Number of times usage detected above level -"
-			print "MaxUsage:",self.sloDefmaxUsage, "Times detected:",self.sloDefn 
+			print "Number of times usage predicted above level:", countP
+			#print "usage:",self.sloDefmaxUsage, "Times detected:",self.sloDefn 
 			if(countP>self.sloDefn):
 				#SLO predicted, increment count
 				self.repetitions+=1
