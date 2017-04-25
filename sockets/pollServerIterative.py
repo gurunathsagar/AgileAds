@@ -109,6 +109,7 @@ class ResourceManager(Thread):
                             connList.pop(i)
                             qList.pop(i)
                             deletedConnection = i
+                            print 'deleting ', i
                             continue
                     errorCount = 0
                     parts = recvData.split("#")
