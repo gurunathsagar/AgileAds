@@ -13,7 +13,7 @@ def startPollingClients(pidMap, clientMap):
 			pidMap.update({str(lines[i]): lines[i+1]})
 			if str(lines[i]) not in clientMap:
 				print "Starting a new Client for ", lines[i+1]
-				os.system('python pollClient.py ' + str(lines[i]) + ' ' + lines[i+1] )
+				os.system('python pollClient.py ' + str(lines[i]) + ' ' + lines[i+1]  + " &" )
 				#print('python pollClient.py ' + str(lines[i]) + ' ' + lines[i+1] )
 				clientMap.update({str(lines[i]): True})
 		
