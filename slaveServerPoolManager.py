@@ -30,6 +30,7 @@ while True:
 		data += conn.recv(1024)
 		if '*' in data:
 			conn.close()
+			break
 	data = data.split('#')
 	vmName = data[0]
 	print "slave trying to scale up vm:",vmName
