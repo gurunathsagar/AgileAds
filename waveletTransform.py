@@ -178,6 +178,15 @@ class timeseries(object):
 	def __init__(self,lengthTs=0):
 		self.ts = [5]*lengthTs
 		self.lengthTs = lengthTs
+		try:
+			name = 'average4096.csv'
+			tfList = list(pd.read_csv(name,header=None)[0])
+			j = len(tfList)-1; i = lengthTs-1
+			while(i>0 and j>0):
+				self.ts[i]=int(tfList[j])
+				i-=1;j-=1
+		except:
+			print "Could not open initial file"
 	def updateTs(self, recentData):
 		n = len(recentData);i=0;j=0
 		while i< self.lengthTs - n:
