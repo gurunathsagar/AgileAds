@@ -84,7 +84,7 @@ class ResourceManager(Thread):
 
             dataNotRead = True
             deletedConnection = -1
-
+"""
             for i in range(len(connListCopy)):
                 readyString = "ready#"
                 try:    
@@ -121,6 +121,56 @@ class ResourceManager(Thread):
                     qList[i].vmName = parts[1]
                     qList[i].insertValue(float(rVal))
                     rAvg += float(rVal)
+                except socket.error, exc:
+                    print "Unable to get latest data"
+                    qList[i].badCall += 1
+                    #if qList[i].badCall >= 3:
+                    connList[i].close()
+                    connListCopy.pop(i)
+                    connList.pop(i)
+                    qList.pop(i)
+                    deletedConnection = i
+                    continue
+"""
+            i = 0
+            while i < len(connListCopy):
+                readyString = "ready#"
+                try:    
+                    connListCopy[i].send(readyString)
+                    try:
+                        recvData = connListCopy[i].recv(1024)
+                    except socket.error, exc:
+                        #qList[i].badCall += 1
+                        #if qList[i].badCall >= 3:
+                        connList[i].close()
+                        connListCopy.pop(i)
+                        connList.pop(i)
+                        qList.pop(i)
+                        deletedConnection = i
+                        continue
+                    qList[i].badCall = 0
+                    if not recvData:
+                        #qList[i].badCall += 1
+                        #continue
+                        #if qList[i].badCall >= 3:
+                        connList[i].close()
+                        connListCopy.pop(i)
+                        connList.pop(i)
+                        qList.pop(i)
+                        deletedConnection = i
+                        print 'deleting ', i
+                        continue
+                    qList[i].badCall = 0
+                    dataNotRead = False
+                    parts = recvData.split("#")
+                    print i, 'value received = ', parts[0], 'ip = ', qList[i].ip
+                    rVal = float(parts[0])
+                    vmNames.append(parts[1])
+                    qList[i].vmName = parts[1]
+                    qList[i].insertValue(float(rVal))
+                    rAvg += float(rVal)
+                    i = i + 1
+                    
                 except socket.error, exc:
                     print "Unable to get latest data"
                     qList[i].badCall += 1
