@@ -64,7 +64,7 @@ while True:
                     procCpu = int(col_15) + int(col_14)
             except IOError:
 
-                print 'Process shut down. Closing client'
+                print 'No such process shut down. Closing client'
                 tcpClientA.close()
                 sys.exit()
 
