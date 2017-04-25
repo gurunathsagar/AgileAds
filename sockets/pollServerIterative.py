@@ -63,7 +63,7 @@ class ResourceManager(Thread):
             #resourceValue = [0.0] * len(connList)
 
             #runningThreads = []
-            connListCopy = connList
+            connListCopy = connList[:]
             # for i in range(len(connListCopy)):
             #     newthread = ResourceCollector(connListCopy[i])
             #     newthread.start()
