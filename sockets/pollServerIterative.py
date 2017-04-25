@@ -82,6 +82,8 @@ class ResourceManager(Thread):
                 averages.append(qList[i].returnAverage())
             leastLoaded = averages.index(min(averages))
 
+            dataNotRead = True
+
             for i in range(len(connListCopy)):
                 readyString = "ready#"
                 errorCount = 0
@@ -112,6 +114,7 @@ class ResourceManager(Thread):
                             print 'deleting ', i
                             continue
                     errorCount = 0
+                    dataNotRead = False
                     parts = recvData.split("#")
                     print i, 'value received = ', parts[0], 'ip = ', qList[i].ip
                     rVal = float(parts[0])
@@ -121,9 +124,10 @@ class ResourceManager(Thread):
                 except socket.error, exc:
                     print "Unable to get latest data"
 
-            if len(connListCopy)==0 or deletedConnection==leastLoaded:
+            if len(connListCopy)==0 or deletedConnection==leastLoaded or dataNotRead :
                 if len(connListCopy)==0:
                     print 'No connections available'
+                print "Not sending value to Predictor"
                 continue
 
             rAvg /= len(connListCopy)
