@@ -30,6 +30,7 @@ class sloCheck(object):
 		self.sloDefn = nTimes
 		#By definition, SLO is violated if resource usage in a 2 minute(64 units) interval is above maxUsage nTimes
 		self.nTimesSLOundetected=0
+		self.repetitions = 0
 	def isViolated(self, prediction, nlen,actual=None):
 		countP=0;countA=0;
 		for i in range(nlen):
@@ -37,8 +38,15 @@ class sloCheck(object):
 				countP+=1
 			if actual != None and actual[i]>self.sloDefmaxUsage:	
 				countA+=1
+			print "Number of times usage detected above level -"
+			print "MaxUsage:",self.sloDefmaxUsage, "Times detected:",self.nTimes 
 			if(countP>self.sloDefn):
-				#SLO predicted, return True
+				#SLO predicted, increment count
+				self.repetitions+=1
+			else:
+				self.repetitions=0
+			if self.repetitions >=3:
+				self.repetitions = 0
 				return True
 			if(countA > self.sloDefn):
 				#SLO was not detected. resulted in actual SLO
@@ -262,7 +270,7 @@ queueLock = threading.Lock()
 threadId = 1
 thread = myThread(threadId, 'maxUsage Thread', dM)
 thread.start()
-
+vmbootupTime = 0
 
 """
 Socket Server Program 
@@ -278,7 +286,7 @@ try:
     s.bind((HOST, PORT))
 except socket.error , msg:
     print 'Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
-print 'Socket bind complete'
+#print 'Socket bind complete'
 
 
 while True:
@@ -325,20 +333,25 @@ while True:
 	slo.sloParametersUpdate(maxUsage=dM[0], nTimes=dM[1]);# = sloCheck(maxUsage=dM[0], nTimes=dM[1])
 	queueLock.release()
 	isSloViolated = slo.isViolated(tsPredict5,len(tsPredict5))
+	if(vmbootupTime!=0):
+		vmbootupTime+=1
+		vmbootupTime=vmbootupTime%128
 	if(isSloViolated):
 		#Trigger the VM Cloning. Send a reqest to host hostIp at port number 9000
-		hostPort = 9000
-		tcpSocketHost = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		status = tcpSocketHost.connect_ex((hostIp, hostPort))
-		if status:
-			print 'could not establish a connection'
-			tcpSocketHost.close()
-		else:
-			stringTosend = ''+vmName+'#*'
-			tcpSocketHost.send(stringTosend)
-			tcpSocketHost.close()
-			print "Cloning vm ", vmName
-		pass
+		if(vmbootupTime == 0):
+			vmbootupTime+=1
+			hostPort = 9000
+			tcpSocketHost = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			status = tcpSocketHost.connect_ex((hostIp, hostPort))
+			if status:
+				print 'could not establish a connection'
+				tcpSocketHost.close()
+			else:
+				stringTosend = ''+vmName+'#*'
+				tcpSocketHost.send(stringTosend)
+				tcpSocketHost.close()
+				print "Cloning vm ", vmName
+			pass
 	
 	#plot Resource Usage vs Prediction
 	#print ts.ts[4080:]
