@@ -79,9 +79,7 @@ class ResourceManager(Thread):
 
             averages = []
             vmNames = []
-            for i in range(len(connListCopy)):
-                averages.append(qList[i].returnAverage())
-            leastLoaded = averages.index(min(averages))
+            
 
             dataNotRead = True
             deletedConnection = -1
@@ -138,6 +136,10 @@ class ResourceManager(Thread):
                     sleep(2)
                 print "Not sending value to Predictor"
                 continue
+
+            for i in range(len(connListCopy)):
+                averages.append(qList[i].returnAverage())
+            leastLoaded = averages.index(min(averages))
 
             rAvg /= len(connListCopy)
             fileHandle.write(str(rAvg) + "\n")
