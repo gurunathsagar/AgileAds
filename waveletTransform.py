@@ -38,8 +38,8 @@ class sloCheck(object):
 				countP+=1
 			if actual != None and actual[i]>self.sloDefmaxUsage:	
 				countA+=1
-			print "Number of times usage detected above level -"
-			print "MaxUsage:",self.sloDefmaxUsage, "Times detected:",self.nTimes 
+			print "Number of times usage predicted above level:", countP
+			#print "usage:",self.sloDefmaxUsage, "Times detected:",self.sloDefn 
 			if(countP>self.sloDefn):
 				#SLO predicted, increment count
 				self.repetitions+=1
@@ -189,7 +189,7 @@ class timeseries(object):
 		self.ts = [5]*lengthTs
 		self.lengthTs = lengthTs
 		try:
-			name = 'average4096.csv'
+			name = 'sockets/average4096.csv'
 			tfList = list(pd.read_csv(name,header=None)[0])
 			j = len(tfList)-1; i = lengthTs-1
 			while(i>0 and j>0):

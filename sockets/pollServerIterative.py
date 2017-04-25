@@ -50,7 +50,7 @@ class ResourceManager(Thread):
     def run(self):
 
         print "Resource manager spawned"
-        fileHandle = open('file.csv','a+')
+        fileHandle = open('average4096.csv','a+')
         while True:
 
             if len(connList) == 0:
