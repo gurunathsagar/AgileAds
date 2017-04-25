@@ -99,6 +99,7 @@ class ResourceManager(Thread):
                             continue
                     if not recvData:
                         errorCount += 1
+                        continue
                         if errorCount >= 3:
                             connList[i].close()
                             connListCopy.pop(i)
