@@ -1,6 +1,7 @@
 import sys
 import socket
 import os
+from subprocess import call
 
 TCP_IP = '0.0.0.0'
 TCP_PORT = 9000
@@ -21,3 +22,7 @@ while True:
 			conn.close()
 	print data
 	data = data.split('#')
+	vmName = data[0]
+	username = "arakhade"
+	serverIp = "152.46.16.115"
+	call(['bash', 'run.sh',vmName, username, serverIp])
