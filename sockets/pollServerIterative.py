@@ -148,7 +148,7 @@ class ResourceManager(Thread):
                         qList.pop(i)
                         deletedConnection = i
                         print "deleting beacuse of recv error"
-                        continue
+                        break
                     qList[i].badCall = 0
                     if not recvData:
                         #qList[i].badCall += 1
@@ -160,7 +160,7 @@ class ResourceManager(Thread):
                         qList.pop(i)
                         deletedConnection = i
                         print 'deleting ', i
-                        continue
+                        break
                     qList[i].badCall = 0
                     dataNotRead = False
                     parts = recvData.split("#")
@@ -181,7 +181,7 @@ class ResourceManager(Thread):
                     connList.pop(i)
                     qList.pop(i)
                     deletedConnection = i
-                    continue
+                    break
 
             if len(connListCopy)==0 or deletedConnection!=-1 or dataNotRead :
                 if len(connListCopy)==0:
