@@ -9,7 +9,7 @@
     $category = $HTTP_POST_VARS['category'];
     if ($category == null)
     {
-      $category = $HTTP_GET_VARS['category'];
+      $category = $_GET['category'];
       if ($category == null)
       {
          printError($scriptName, $startTime, "SellItemForm", "You must provide a category identifier!<br>");
@@ -20,7 +20,7 @@
     $user = $HTTP_POST_VARS['user'];
     if ($user == null)
     {
-      $user = $HTTP_GET_VARS['user'];
+      $user = $_GET['user'];
       if ($user == null)
       {
          printError($scriptName, $startTime, "SellItemForm", "You must provide a user identifier!<br>");

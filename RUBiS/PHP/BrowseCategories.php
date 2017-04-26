@@ -8,15 +8,15 @@
 
     $region = $HTTP_POST_VARS['region'];
     if ($region == null)
-      $region = $HTTP_GET_VARS['region'];
+      $region = $_GET['region'];
 
     $username = $HTTP_POST_VARS['nickname'];
     if ($username == null)
-      $username = $HTTP_GET_VARS['nickname'];
+      $username = $_GET['nickname'];
 
     $password = $HTTP_POST_VARS['password'];
     if ($password == null)
-      $password = $HTTP_GET_VARS['password'];
+      $password = $_GET['password'];
 
     getDatabaseLink($link);
 

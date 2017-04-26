@@ -9,7 +9,7 @@
     $categoryName = $HTTP_POST_VARS['categoryName'];
     if ($categoryName == null)
     {
-      $categoryName = $HTTP_GET_VARS['categoryName'];
+      $categoryName = $_GET['categoryName'];
       if ($categoryName == null)
       {
          printError($scriptName, $startTime, "Search Items By Category", "You must provide a category name!<br>");
@@ -20,7 +20,7 @@
     $categoryId = $HTTP_POST_VARS['category'];
     if ($categoryId == null)
     {
-      $categoryId = $HTTP_GET_VARS['category'];
+      $categoryId = $_GET['category'];
       if ($categoryId == null)
       {
          printError($scriptName, $startTime, "Search Items By Category", "You must provide a category identifier!<br>");
@@ -31,7 +31,7 @@
     $page = $HTTP_POST_VARS['page'];
     if ($page == null)
     {
-      $page = $HTTP_GET_VARS['page'];
+      $page = $_GET['page'];
       if ($page == null)
         $page = 0;
     }
@@ -39,7 +39,7 @@
     $nbOfItems = $HTTP_POST_VARS['nbOfItems'];
     if ($nbOfItems == null)
     {
-      $nbOfItems = $HTTP_GET_VARS['nbOfItems'];
+      $nbOfItems = $_GET['nbOfItems'];
       if ($nbOfItems == null)
         $nbOfItems = 25;
     }

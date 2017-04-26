@@ -9,7 +9,7 @@
     $nickname = $HTTP_POST_VARS['nickname'];
     if ($nickname == null)
     {
-      $nickname = $HTTP_GET_VARS['nickname'];
+      $nickname = $_GET['nickname'];
       if ($nickname == null)
       {
          printError($scriptName, $startTime, "About me", "You must provide your nick name!<br>");
@@ -19,7 +19,7 @@
     $password = $HTTP_POST_VARS['password'];
     if ($password == null)
     {
-      $password = $HTTP_GET_VARS['password'];
+      $password = $_GET['password'];
       if ($password == null)
       {
          printError($scriptName, $startTime, "About me", "You must provide your password!<br>");

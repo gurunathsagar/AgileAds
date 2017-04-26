@@ -9,7 +9,7 @@
     $to = $HTTP_POST_VARS['to'];
     if ($to == null)
     {
-      $to = $HTTP_GET_VARS['to'];
+      $to = $_GET['to'];
       if ($to == null)
       {
          printError($scriptName, $startTime, "PutComment", "You must provide a user identifier!<br>");
@@ -20,7 +20,7 @@
     $nickname = $HTTP_POST_VARS['nickname'];
     if ($nickname == null)
     {
-      $nickname = $HTTP_GET_VARS['nickname'];
+      $nickname = $_GET['nickname'];
       if ($nickname == null)
       {
          printError($scriptName, $startTime, "PutComment", "You must provide a nick name!<br>");
@@ -31,7 +31,7 @@
     $password = $HTTP_POST_VARS['password'];
     if ($password == null)
     {
-      $password = $HTTP_GET_VARS['password'];
+      $password = $_GET['password'];
       if ($password == null)
       {
          printError($scriptName, $startTime, "PutComment", "You must provide a password!<br>");
@@ -42,7 +42,7 @@
     $itemId = $HTTP_POST_VARS['itemId'];
     if ($itemId == null)
     {
-      $itemId = $HTTP_GET_VARS['itemId'];
+      $itemId = $_GET['itemId'];
       if ($itemId == null)
       {
          printError($scriptName, $startTime, "PutComment", "You must provide an item identifier!<br>");
