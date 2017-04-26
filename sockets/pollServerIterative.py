@@ -52,7 +52,7 @@ class ResourceManager(Thread):
     def run(self):
 
         print "Resource manager spawned"
-        fileHandle = open('average4096.csv','a+')
+        fileHandle = open('fileWithValues.csv','a+')
         while True:
 
             if len(connList) == 0:
@@ -151,7 +151,7 @@ class ResourceManager(Thread):
             fileHandle.write(str(rAvg) + "\n")
             print "avg = ", rAvg, " no. of clients open = ", len(connListCopy)
             rAvgArray.append(rAvg)
-            sendToPredictor(rAvgArray, qList[leastLoaded].vmName, qList[leastLoaded].ip)
+            #sendToPredictor(rAvgArray, qList[leastLoaded].vmName, qList[leastLoaded].ip)
             sleep(2)
 
         fileHandle.close()
