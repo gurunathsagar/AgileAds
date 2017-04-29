@@ -83,13 +83,14 @@ class Accuracy(object):
 		self.underAllocationPercent = 0
 		self.overAllocationPercent = 0
 
-		error = np.array(predictedTs) - np.array(actual_wValues); n = len(actualTs); sumSquares = 0
+		error = np.array(predictedTs) - np.array(actualTs); n = len(actualTs); sumSquares = 0
 		for e in error:
 			sumSquares += (float(e*e))/n
-			if e < 0:
+			if e < -2:
 				self.underAllocationPercent+=1
-			elif e > 0:
+			elif e > 2:
 				self.overAllocationPercent+=1
+				
 		self.rmse = math.sqrt(sumSquares)
 		self.underAllocationPercent = (self.underAllocationPercent/float(n))*100
 		self.overAllocationPercent = (self.overAllocationPercent/float(n))*100
@@ -140,6 +141,16 @@ def predictSimpleMarkovChain(ts, start, end, nV,w, nStates = 40,padPercent=0):
 		predictedStates.append(k)
 		demand =a_min + k*binSize + binSize/2
 		w.append(demand + demand*padPercent/100.00)
+
+def predictSimpleMovingAverage(ts, start, end, nV,w, nStates = 40,padPercent=0):
+	d = ts[start:end]
+	n = float(len(d))
+	sumD = sum(d)
+	for i in range(nV):
+		w.append(sumD/n)
+		d.pop(0)
+		d.append(w[-1])
+
 
 def predictSimpleMarkovChain2(ts, start, end, nV,w, nStates = 40,padPercent=0):
 	#nV = number of values to predict
@@ -231,7 +242,7 @@ class WaveletTransform(object) :
 		nV = int(self.w /(2**scaleNo))
 		if algo == 'simplemarkov':
 			predictionAlgo = predictSimpleMarkovChain2
-
+			#predictionAlgo = predictSimpleMovingAverage
 		predictionAlgo(ts,i, n-1,nV,ret,padPercent=padPercent)
 		#predict the detailed coefficients
 		while(scaleNo>0):
@@ -243,14 +254,23 @@ class WaveletTransform(object) :
 
 class timeseries(object):
 	def __init__(self,lengthTs=0):
-		self.ts = []
-		self.lengthTs = 0
-		try:
-			name = 'fileWithValues.csv'
-			self.ts = list(pd.read_csv(name,header=None)[0])
-			self.lengthTs = len(self.ts)
-		except:
-			print "Could not open initial file"
+		self.ts = [5]*lengthTs
+		self.lengthTs = lengthTs
+		#self.SDP = []
+		#try:
+		name = 'guru_webserver_cpu.csv'
+		times = list(pd.read_csv(name,header=None)[0])
+		for i in times:
+			self.ts.append(float(i))
+		self.lengthTs = len(self.ts)
+		"""name = 'PredictedData.csv'
+		times = list(pd.read_csv(name,header=None)[0])
+		for i in times:
+			self.SDP.append(float(i))
+		self.lengthTs = len(self.ts)
+		"""
+		#except:
+		#	print "Could not open initial file"
 	def updateTs(self, recentData):
 		n = len(recentData);i=0;j=0
 		while i< self.lengthTs - n:
@@ -309,10 +329,10 @@ class myThread (threading.Thread):
 
 
 
-d = 4096; w=64; haarFactor = 1/math.sqrt(2)
+d = 4098; w=64; haarFactor = 1/math.sqrt(2)
 timeSeries1 = timeseries(lengthTs=d);n = timeSeries1.lengthTs
 
-print "length of ts",n
+
 dx = np.arange(0,d,1)
 wx = np.arange(d,d+w,1)
 maxx = np.arange(0,d+w,1)
@@ -322,40 +342,113 @@ dMaxUsage = [dM[0]]*(d+w)
 #plt.ion()
 #plt.show()
 
+y=0
 finalPredicted = []
-for jk in range(n-d):
+finalPredicted0 = []
+
+
+rmse5 = 0;
+overpredict5 = 0
+underpredict5 = 0
+
+rmse0 = 0;
+overpredict0 = 0
+underpredict0 = 0
+
+count = 0
+while y < n-d-w:
+	
 	plt.clf()
 	tsPredict0 = []
 	tsPredict5 = []
 
-	tsList = timeSeries1.ts[jk:d+jk];max_n = max(tsList);min_n = min(tsList)
+	tsList = timeSeries1.ts[y:d+y];max_n = max(tsList);min_n = min(tsList)
 	haar = WaveletTransform(d=d,w = w)
 
 	haar.forwardTransform(ts=tsList);
-	haar.predictCoeffs(ts=tsList,ret=tsPredict0)
 	haar.predictCoeffs(ts=tsList,ret=tsPredict5)
 
-	haar.inverseTransform(ts=tsPredict0)
 	haar.inverseTransform(ts=tsPredict5)
 
 	for i in range(len(tsPredict5)):
+		if tsPredict5[i] <0 :
+			tsPredict5[i] = 0
+		tsPredict0.append(tsPredict5[i])	
+		
 		tsPredict5[i] = tsPredict5[i]*1.05
 
 
 	#plot Resource Usage vs Prediction
 	#print ts.ts[4080:]
 	#plt.clf()
-	#usagePlot = plt.plot(dx[:], ts.ts[:d],'b')
-	usagePlot = plt.plot(wx[:], timeSeries1.ts[d+jk:d+w+jk],'r')
-	predictedPlot = plt.plot(wx, tsPredict5[:],'b')
-	predictedPlot = plt.plot(wx, tsPredict0[:],'g')
-	#plt.plot(ts.ts)
+	if y in range(d,d+d):
+		usagePlot = plt.plot(wx[:], timeSeries1.ts[d:d+w],'r')
+		predictedPlot = plt.plot(wx, tsPredict5[:],'b')
+		predictedPlot = plt.plot(wx, tsPredict0[:],'g')
+		
+		plt.show()
+    
+	if y > 4098:
+		acc5 = Accuracy(timeSeries1.ts[d+y:d+y+w],tsPredict5)
+		acc0 = Accuracy(timeSeries1.ts[d+y:d+y+w],tsPredict0)
 
-	#ani = animation.FuncAnimation(fig, animate, dx, interval=2)
-	
-	plt.show()
-	#plt.draw()
-	plt.pause(0.002)
+		rmse5 += acc5.rmse;
+		overpredict5 += acc5.overAllocationPercent
+		underpredict5 += acc5.underAllocationPercent
+
+		rmse0 += acc0.rmse;
+		overpredict0 += acc0.overAllocationPercent
+		underpredict0 += acc0.underAllocationPercent
+		count+=1
+
+
+	l = 0
+	while l<10:
+		finalPredicted.append(tsPredict5[l])
+		finalPredicted0.append(tsPredict0[l])
+		l+=1
+	y+=10	
+
+n = timeSeries1.lengthTs
+
+rmse5 = rmse5/count;
+overpredict5 = overpredict5/count
+underpredict5 = underpredict5/count
+
+rmse0 = rmse0/count;
+overpredict0 = overpredict0/count
+underpredict0 = underpredict0/count
+
+plt.clf()
+i = 0 
+
+
+print "Agile5",rmse5,overpredict5,underpredict5
+print "Agile0",rmse0,overpredict0,underpredict0
+
+
+xPlot = timeSeries1.ts[d:d+4500]
+#print xPlot[0],len(xPlot)
+x = np.arange(0,4500,1)
+usagePlot = plt.plot(x,xPlot,'b')
+predictedPlot = plt.plot(x,finalPredicted[:4500],'r')
+predictedPlot0 = plt.plot(x,finalPredicted0[:4500],'g')
+plt.ylabel('CPU Usage%');
+plt.xlabel('1unit = 2 seconds');
+plt.show()
+
+"""
+while(i < n-100):
+	nt = np.arange(i,i+100,1)
+	plt.clf()
+	plt.ylim((0,100))
+	usagePlot = plt.plot(nt[:], timeSeries1.ts[i+d:i+100+d],'b')
+	predictedPlot = plt.plot(nt[:],finalPredicted[i:i+100],'r')
+	predictedPlot0 = plt.plot(nt[:],timeSeries1.SDP[i:i+100],'g')
+	i+=1
+	plt.draw()
+	plt.pause(0.001)
+"""	
 
 		
 
