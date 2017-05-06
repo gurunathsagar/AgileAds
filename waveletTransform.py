@@ -24,6 +24,24 @@ def max_index(arr):
 	return index
 
 
+def return_nextProbableState(currentState,arr):
+	index = 0;m = 0;
+	s = sum(arr); #print arr
+	n = len(arr)
+	#print 'sum is', s
+	if s == 0:
+		#print 'hey'
+		if currentState == n-1:
+			index = np.random.randint(0,n)
+		else:
+			index = np.random.randint(currentState+1,n)
+	for i in range(n):
+		if arr[i]>m:
+			index = i;
+			m = arr[i]
+	return index
+
+
 class sloCheck(object):
 	def __init__(self,maxUsage, nTimes):
 		self.sloDefmaxUsage = maxUsage
@@ -65,13 +83,14 @@ class Accuracy(object):
 		self.underAllocationPercent = 0
 		self.overAllocationPercent = 0
 
-		error = np.array(predictedTs) - np.array(actual_wValues); n = len(actualTs); sumSquares = 0
+		error = np.array(predictedTs) - np.array(actualTs); n = len(actualTs); sumSquares = 0
 		for e in error:
 			sumSquares += (float(e*e))/n
-			if e < 0:
+			if e < -2:
 				self.underAllocationPercent+=1
-			elif e > 0:
+			elif e > 2:
 				self.overAllocationPercent+=1
+				
 		self.rmse = math.sqrt(sumSquares)
 		self.underAllocationPercent = (self.underAllocationPercent/float(n))*100
 		self.overAllocationPercent = (self.overAllocationPercent/float(n))*100
@@ -115,10 +134,10 @@ def predictSimpleMarkovChain(ts, start, end, nV,w, nStates = 40,padPercent=0):
 	lastState = stateTs[-1]
 	x = np.zeros(nStates)
 	x[lastState]=1;p1=1
-	predictedStates = []; 
+	predictedStates = []; k = lastState
 	for i in range(nV):
 		p1 = np.dot(p1,p)
-		x = np.dot(x,p1); k = max_index(x)
+		x = np.dot(x,p1); k = return_nextProbableState(k,x)
 		predictedStates.append(k)
 		demand =a_min + k*binSize + binSize/2
 		w.append(demand + demand*padPercent/100.00)
@@ -189,7 +208,7 @@ class timeseries(object):
 		self.ts = [5]*lengthTs
 		self.lengthTs = lengthTs
 		try:
-			name = 'sockets/average4096.csv'
+			name = 'guru_webserver_cpu.csv'
 			tfList = list(pd.read_csv(name,header=None)[0])
 			j = len(tfList)-1; i = lengthTs-1
 			while(i>0 and j>0):

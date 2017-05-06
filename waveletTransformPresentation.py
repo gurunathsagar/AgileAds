@@ -11,6 +11,7 @@ import sys
 import Queue
 import threading
 import time
+import csv
 
 
 
@@ -203,7 +204,7 @@ class WaveletTransform(object) :
 		self.d = d
 		self.w = w
 		if(wavelet == 'haar'):
-			self.factor = 1/math.sqrt(2)
+			self.factor = 1/math.sqrt(2);
 	def forwardTransformSingleScale(self,ts, n):
 		h = n/2; i = 0;a=[0]*n
 		while(i<h):
@@ -254,12 +255,14 @@ class WaveletTransform(object) :
 
 class timeseries(object):
 	def __init__(self,lengthTs=0):
-		self.ts = [5]*lengthTs
+		self.ts = []
 		self.lengthTs = lengthTs
 		#self.SDP = []
 		#try:
-		name = 'guru_webserver_cpu.csv'
+		name = 'fileWithValues.csv'
+		#name = 'guru_webserver_cpu.csv'
 		times = list(pd.read_csv(name,header=None)[0])
+		#print times
 		for i in times:
 			self.ts.append(float(i))
 		self.lengthTs = len(self.ts)
@@ -329,7 +332,7 @@ class myThread (threading.Thread):
 
 
 
-d = 4098; w=64; haarFactor = 1/math.sqrt(2)
+d = 4098; w=64; haarFactor = 1/math.sqrt(2);haarFactor = 1/2.0
 timeSeries1 = timeseries(lengthTs=d);n = timeSeries1.lengthTs
 
 
@@ -364,10 +367,29 @@ while y < n-d-w:
 
 	tsList = timeSeries1.ts[y:d+y];max_n = max(tsList);min_n = min(tsList)
 	haar = WaveletTransform(d=d,w = w)
-
+	
 	haar.forwardTransform(ts=tsList);
 	haar.predictCoeffs(ts=tsList,ret=tsPredict5)
-
+	
+	"""if y in range(d,d+10):
+		with open("outputTs.csv", "wb") as f:
+			writer = csv.writer(f)
+			for item in tsList:
+				writer.writerow([item])
+		with open("outputPredictTs.csv", "wb") as f2:
+			writer2 = csv.writer(f2)
+			#writer2.writerows(tsPredict5)
+			for item in tsPredict5:
+				writer2.writerow([item])
+		abc = np.arange(3850,4096,2); lenabc = len(abc)
+		print len(abc)
+		pqr = np.arange(d,d+w,2)
+		abcPlot = plt.plot(abc, tsList[4096-lenabc:4096],'b')
+		pqrPlot = plt.plot(pqr, tsPredict5[32:64],'ro')
+		plt.show()
+		print "done writing"
+		break"""
+		
 	haar.inverseTransform(ts=tsPredict5)
 
 	for i in range(len(tsPredict5)):
@@ -376,18 +398,16 @@ while y < n-d-w:
 		tsPredict0.append(tsPredict5[i])	
 		
 		tsPredict5[i] = tsPredict5[i]*1.05
-
-
-	#plot Resource Usage vs Prediction
-	#print ts.ts[4080:]
-	#plt.clf()
-	if y in range(d,d+d):
-		usagePlot = plt.plot(wx[:], timeSeries1.ts[d:d+w],'r')
-		predictedPlot = plt.plot(wx, tsPredict5[:],'b')
-		predictedPlot = plt.plot(wx, tsPredict0[:],'g')
+		#plot Resource Usage vs Prediction
+		#print ts.ts[4080:]
+		#plt.clf()
+		"""	if y in range(d,d+10):
+		abc = np.arange(3850,4096,1); lenabc = len(abc)
+		usagePlot = plt.plot(abc, timeSeries1.ts[d-lenabc:d],'b')
+		#predictedPlot = plt.plot(wx, tsPredict5[:],'r')
+		predictedPlot = plt.plot(wx, tsPredict0[:],'r')
 		
-		plt.show()
-    
+		plt.show()"""	    
 	if y > 4098:
 		acc5 = Accuracy(timeSeries1.ts[d+y:d+y+w],tsPredict5)
 		acc0 = Accuracy(timeSeries1.ts[d+y:d+y+w],tsPredict0)
@@ -409,6 +429,17 @@ while y < n-d-w:
 		l+=1
 	y+=10	
 
+"""
+abc = np.arange(3850,4098,1); lenabc = len(abc)
+usagePlot = plt.plot(abc, timeSeries1.ts[4098+4098-lenabc:4098+4098],'b')
+#predictedPlot = plt.plot(wx, tsPredict5[:],'r')
+pqr = np.arange(4098,4098+w,1)
+predictedPlot = plt.plot(pqr, finalPredicted0[4098:4098+w],'r')
+
+plt.show()
+"""
+
+
 n = timeSeries1.lengthTs
 
 rmse5 = rmse5/count;
@@ -429,10 +460,11 @@ print "Agile0",rmse0,overpredict0,underpredict0
 
 xPlot = timeSeries1.ts[d:d+4500]
 #print xPlot[0],len(xPlot)
+
 x = np.arange(0,4500,1)
 usagePlot = plt.plot(x,xPlot,'b')
 predictedPlot = plt.plot(x,finalPredicted[:4500],'r')
-predictedPlot0 = plt.plot(x,finalPredicted0[:4500],'g')
+#predictedPlot0 = plt.plot(x,finalPredicted0[:4500],'g')
 plt.ylabel('CPU Usage%');
 plt.xlabel('1unit = 2 seconds');
 plt.show()
